@@ -1,0 +1,9 @@
+dependencies:
+- name: seq
+  repository: https://kubernetes-charts.storage.googleapis.com
+  version: 2.3.0
+- name: mysql
+  repository: https://charts.bitnami.com/bitnami
+  version: 6.14.10
+digest: sha256:d1cbeb2949fa9c93556e092b47c636e7c6223b219e8309dd09e7a01035566c98
+generated: "2020-10-15T16:20:43.1260617+02:00"

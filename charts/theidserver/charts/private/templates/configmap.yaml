@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "private.fullname" . }}-config
+  labels:
+    {{- include "private.labels" . | nindent 4 }}
+data:
+  ASPNETCORE_Kestrel__Certificates__Default__Path: "/usr/local/share/ca-certificates/tls.pfx"
+  ASPNETCORE_URLS: "https://+:5443"
+  ASPNETCORE_HTTPS_PORT: "5443"
+  SignalR__RedisConnectionString: "{{ include "private.redis" . }}"
+  Serilog__WriteTo__0__Args__serverUrl: "{{ include "private.seqUrl" . }}"
+  {{- range $key, $value := .Values.appSettings }}
+  {{ $key }}: {{ $value |quote }}
+  {{- end }}
+  IdentityServer__Key__KeyProtectionOptions__X509CertificatePath: /usr/local/share/ca-certificates/sk.pfx
+  DataProtectionOptions__KeyProtectionOptions__X509CertificatePath: /usr/local/share/ca-certificates/dp.pfx
+
