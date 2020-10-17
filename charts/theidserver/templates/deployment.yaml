@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "private.fullname" . }}
+  name: {{ include "theidserver.fullname" . }}-public
   labels:
-    {{- include "private.labels" . | nindent 4 }}
+    {{- include "theidserver.labels" . | nindent 4 }}
 spec:
 {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
 {{- end }}
   selector:
     matchLabels:
-      {{- include "private.selectorLabels" . | nindent 6 }}
+      {{- include "theidserver.selectorLabels" . | nindent 6 }}
   template:
     metadata:
     {{- with .Values.podAnnotations }}
@@ -18,13 +18,13 @@ spec:
         {{- toYaml . | nindent 8 }}
     {{- end }}
       labels:
-        {{- include "private.selectorLabels" . | nindent 8 }}
+        {{- include "theidserver.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "private.serviceAccountName" . }}
+      serviceAccountName: {{ include "theidserver.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -34,31 +34,28 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - containerPort: 5443
-              name: https
+          {{- range $key, $value := .Values.service.ports }}
+            - containerPort: {{ $value }}
+              name: {{ $key }}
+          {{- end }}
           envFrom: 
           - configMapRef:
-              name: {{ include "private.fullname" . }}-config
+              name: {{ include "theidserver.fullname" . }}-config
           env:
-          - name: ConnectionStrings__DefaultConnection
-            valueFrom:
-              secretKeyRef:
-                name: {{ include "private.fullname" . }}-opaque
-                key: ConnectionString
           - name: ASPNETCORE_Kestrel__Certificates__Default__Password
             valueFrom:
               secretKeyRef:
-                name: {{ include "private.fullname" . }}-opaque
+                name: {{ include "theidserver.fullname" . }}-opaque
                 key: tls.pwd
           - name: IdentityServer__Key__KeyProtectionOptions__X509CertificatePassword
             valueFrom:
               secretKeyRef:
-                name: {{ include "private.fullname" . }}-opaque
+                name: {{ include "theidserver.fullname" . }}-opaque
                 key: dataProtection.pwd
           - name: DataProtectionOptions__KeyProtectionOptions__X509CertificatePassword
             valueFrom:
               secretKeyRef:
-                name: {{ include "private.fullname" . }}-opaque
+                name: {{ include "theidserver.fullname" . }}-opaque
                 key: signingKey.pwd
           volumeMounts:
           - name: certificates-secret
@@ -67,10 +64,16 @@ spec:
             mountPath: /usr/local/share/ca-certificates
           - name: config
             mountPath: /usr/local/share/config
+          - name: keys-volume
+            mountPath: /usr/local/share/keys
+          {{- if .Values.private.ssl.ca.trustCA }}
+          - name: private-certificates-secret
+            mountPath: /usr/local/share/private-certificates
+          {{- end }}
           lifecycle:
             postStart:
               exec:
-                command: ["/bin/sh", "-c", "{{ include "private.init" . }}"]
+                command: ["/bin/sh", "-c", "{{ include "theidserver.init" . }}"]
           livenessProbe:
             httpGet:
               scheme: HTTPS
@@ -93,15 +96,23 @@ spec:
       volumes:
       - name: certificates-secret
         secret:
-          secretName: {{ include "private.fullname" . }}-certs
+          secretName: {{ include "theidserver.fullname" . }}-certs
       - name: pxf-volume
-        emptyDir: {}        
+        emptyDir: {}
+      - name: keys-volume
+        persistentVolumeClaim:
+          claimName: {{ include "theidserver.fullname" . }}-keys
       - name: config
         configMap:
-          name: {{ include "private.fullname" . }}-config-files
+          name: {{ include "theidserver.fullname" . }}-config-files
           items:
           - key: admin-appsettings.json
             path: admin-appsettings.json
+      {{- if .Values.private.ssl.ca.trustCA }}
+      - name: private-certificates-secret
+        secret:
+          secretName: {{ include "theidserver.private.fullname" . }}-certs
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

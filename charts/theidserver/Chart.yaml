@@ -37,12 +37,3 @@ maitainers:
     email: aguacongas@gmail.com
     url: https://github.com/aguacongas
 icon: https://raw.githubusercontent.com/Aguafrommars/TheIdServer/master/package-icon.png
-
-dependencies:
-  - name: seq
-    repository: https://kubernetes-charts.storage.googleapis.com
-    version: 2.3.0
-    condition: seq.enabled, seq.enabled
-    tags:
-      - back-end
-      - seq

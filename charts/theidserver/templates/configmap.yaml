@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "theidserver.fullname" . }}-config
+  labels:
+    {{- include "theidserver.labels" . | nindent 4 }}
+data:
+  ASPNETCORE_Kestrel__Certificates__Default__Path: "/usr/local/share/ca-certificates/tls.pfx"
+  ASPNETCORE_URLS: https://+:80;https://+:443
+  ASPNETCORE_HTTPS_PORT: "443"
+  Serilog__WriteTo__0__Args__serverUrl: "{{ include "theidserver.seqUrl" . }}"
+  PrivateServerAuthentication__Authority: "{{ include "theidserver.privateUrl" . }}"
+  PrivateServerAuthentication__ApiUrl: "{{ include "theidserver.privateUrl" . }}/api"
+  SignalR__HubUrl: "{{ include "theidserver.privateUrl" . }}/providerhub"
+  {{- range $key, $value := .Values.appSettings }}
+  {{ $key }}: {{ $value |quote }}
+  {{- end }}
+  IdentityServer__Key__KeyProtectionOptions__X509CertificatePath: /usr/local/share/ca-certificates/sk.pfx
+  DataProtectionOptions__KeyProtectionOptions__X509CertificatePath: /usr/local/share/ca-certificates/dp.pfx
+
