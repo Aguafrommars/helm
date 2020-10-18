@@ -1,0 +1,38 @@
+# Default values for TheIdServer.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+mysql:
+  enabled: false
+seq:
+  enabled: false
+
+# Dependencies configuration
+private:
+  mysql:
+    enabled: false
+    db: 
+      password: "Th€IdS€rv€r-2o2o" # The mysql user password is required
+  redis:
+    enabled: false
+  seq:
+    enabled: false
+
+  # Kestrel servers cerificates
+  ssl: 
+    create: true
+  # Certificate to crypt data protection keys
+  dataProtection:
+    create: true
+  # Certificate to crypt signing keys
+  signingKey:
+    create: true
+
+ssl: 
+  create: true
+    # Certificate to crypt data protection keys
+dataProtection:
+  create: true
+# Certificate to crypt signing keys
+signingKey:
+  create: true

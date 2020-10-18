@@ -3,6 +3,7 @@
 # Declare variables to be passed into your templates.
 
 enabled: true
+  
 replicaCount: 2
 
 image:
@@ -94,10 +95,7 @@ appSettings:
   DataProtectionOptions__StorageKind: FileSytem
   DataProtectionOptions__StorageConnectionString: "/usr/local/share/keys/dataprotection"
   DataProtectionOptions__KeyProtectionOptions__KeyProtectionKind: "X509"
-  ApiAuthentication__Authority: https://localhost
   ApiAuthentication__IntrospectionDiscoveryPolicy__ValidateIssuerName: "false"
-  EmailApiAuthentication__Authority: https://localhost
-  EmailApiAuthentication__ApiUrl: https://localhost/api/email
   SignalR__HubOptions__EnableDetailedErrors: "true"
   SignalR__UseMessagePack: "true"
   Serilog__WriteTo__0__Args__apiKey: MYZxOmhzGAwCtEyqLsQS
@@ -111,7 +109,8 @@ ssl:
   crt:
   key:
   ca:
-    trustCA: false
+    trust: false
+    issuer:
     crt: 
     key: 
 

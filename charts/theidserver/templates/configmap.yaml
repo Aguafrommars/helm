@@ -1,3 +1,4 @@
+{{- if .Values.enabled -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -5,16 +6,19 @@ metadata:
   labels:
     {{- include "theidserver.labels" . | nindent 4 }}
 data:
-  ASPNETCORE_Kestrel__Certificates__Default__Path: "/usr/local/share/ca-certificates/tls.pfx"
+  ASPNETCORE_Kestrel__Certificates__Default__Path: "/usr/local/share/ca-certificates/ssl.pfx"
   ASPNETCORE_URLS: https://+:80;https://+:443
   ASPNETCORE_HTTPS_PORT: "443"
   Serilog__WriteTo__0__Args__serverUrl: "{{ include "theidserver.seqUrl" . }}"
   PrivateServerAuthentication__Authority: "{{ include "theidserver.privateUrl" . }}"
   PrivateServerAuthentication__ApiUrl: "{{ include "theidserver.privateUrl" . }}/api"
+  ApiAuthentication__Authority: "{{ include "theidserver.privateUrl" . }}"
+  EmailApiAuthentication__Authority: "{{ include "theidserver.privateUrl" . }}"
+  EmailApiAuthentication__ApiUrl: "{{ include "theidserver.privateUrl" . }}/email"
   SignalR__HubUrl: "{{ include "theidserver.privateUrl" . }}/providerhub"
   {{- range $key, $value := .Values.appSettings }}
   {{ $key }}: {{ $value |quote }}
   {{- end }}
   IdentityServer__Key__KeyProtectionOptions__X509CertificatePath: /usr/local/share/ca-certificates/sk.pfx
   DataProtectionOptions__KeyProtectionOptions__X509CertificatePath: /usr/local/share/ca-certificates/dp.pfx
-
+{{- end -}}

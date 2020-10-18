@@ -1,6 +1,6 @@
 {
   "administratorEmail": "aguacongas@gmail.com",
-  "apiBaseUrl": "https://theidserver.aguafrommars.com/api",
+  "apiBaseUrl": "{{ include "theidserver.url" . | trimAll "\n" }}/api",
   "loggingOptions": {
     "minimum": "Warning"
   },
@@ -12,15 +12,15 @@
     "roleClaim": "role"
   },
   "providerOptions": {
-    "authority": "https://theidserver.aguafrommars.com/",
+    "authority": "{{ include "theidserver.url" . | trimAll "\n" }}",
     "clientId": "theidserveradmin",
     "defaultScopes": [
       "openid",
       "profile",
       "theidserveradminapi"
     ],
-    "postLogoutRedirectUri": "https://theidserver.aguafrommars.com/authentication/logout-callback",
-    "redirectUri": "https://theidserver.aguafrommars.com/authentication/login-callback",
+    "postLogoutRedirectUri": "{{ include "theidserver.url" . | trimAll "\n" }}/authentication/logout-callback",
+    "redirectUri": "{{ include "theidserver.url" . | trimAll "\n" }}/authentication/login-callback",
     "responseType": "code"
   },
   "welcomeContenUrl": "/api/welcomefragment"

@@ -1,3 +1,4 @@
+{{- if .Values.enabled -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -5,7 +6,7 @@ metadata:
   labels:
     {{- include "private.labels" . | nindent 4 }}
 data:
-  ASPNETCORE_Kestrel__Certificates__Default__Path: "/usr/local/share/ca-certificates/tls.pfx"
+  ASPNETCORE_Kestrel__Certificates__Default__Path: "/usr/local/share/ca-certificates/ssl.pfx"
   ASPNETCORE_URLS: "https://+:5443"
   ASPNETCORE_HTTPS_PORT: "5443"
   SignalR__RedisConnectionString: "{{ include "private.redis" . }}"
@@ -15,4 +16,4 @@ data:
   {{- end }}
   IdentityServer__Key__KeyProtectionOptions__X509CertificatePath: /usr/local/share/ca-certificates/sk.pfx
   DataProtectionOptions__KeyProtectionOptions__X509CertificatePath: /usr/local/share/ca-certificates/dp.pfx
-
+{{- end -}}

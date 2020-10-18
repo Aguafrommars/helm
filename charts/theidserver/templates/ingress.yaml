@@ -1,3 +1,4 @@
+{{- if .Values.enabled -}}
 {{- if .Values.ingress.enabled -}}
 {{- $fullName := include "theidserver.fullname" . -}}
 {{- $svcPorts := .Values.service.ports -}}
@@ -38,3 +39,4 @@ spec:
           {{- end }}
     {{- end }}
   {{- end }}
+{{- end -}}

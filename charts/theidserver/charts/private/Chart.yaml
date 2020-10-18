@@ -26,8 +26,14 @@ dependencies:
   - name: mysql
     repository: https://charts.bitnami.com/bitnami
     version: 6.14.10
-    condition: mysql.enabled
+    condition: mysql.enabled, global.mysql.enabled
+    tags:
+      - back-end
+      - mysql
   - name: seq
     repository: https://kubernetes-charts.storage.googleapis.com
     version: 2.3.0
-    condition: seq.enabled
+    condition: seq.enabled, global.seq.enabled
+    tags:
+      - back-end
+      - seq

@@ -91,8 +91,8 @@ define from subcharts
 {{- end }}
 
 {{- define "private.seq.fullname" -}}
-{{- if $.Values.seq.fullnameOverride }}
-{{- $.Values.seq.fullnameOverride | trunc 63 | trimSuffix "-" }}
+{{- if .Values.seq.fullnameOverride }}
+{{- .Values.seq.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
 {{- $name := default "seq" .Values.seq.nameOverride }}
 {{- if contains $name .Release.Name }}
@@ -111,7 +111,7 @@ Create the connection string
 {{- $name := required "The MySql private.mysql.db.name is required" .Values.mysql.db.name }}
 {{- $user := required "The MySql private.mysql.db.user is required" .Values.mysql.db.user }}
 {{- $pwd := required "The MySql private.mysql.db.password is required" .Values.mysql.db.password }}
-{{- printf "server=%s.%s.svc.cluster.local;uid=%s;pwd=%s;database=%s" (include "private.mysql.fullname" .) .Release.Namespace $user $pwd $name }}
+{{- printf "server=%s;uid=%s;pwd=%s;database=%s" (include "private.mysql.fullname" .) $user $pwd $name }}
 {{- else}}
 {{- print .Values.mysql.connectionString }}
 {{- end }}
@@ -122,7 +122,7 @@ Create the seq url
 */}}
 {{- define "private.seqUrl" -}}
 {{ $port := default 5341 .Values.seq.service.port }}
-{{- printf "http://%s.%s.svc.cluster.local:%d" (include "private.seq.fullname" .) .Release.Namespace (int $port) }}
+{{- printf "http://%s:%d" (include "private.seq.fullname" .) (int $port) }}
 {{- end }}
 
 {{/*
@@ -130,7 +130,7 @@ Create the redis connection string
 */}}
 {{- define "private.redis" -}}
 {{ $port := default 6379 .Values.redis.service.port }}
-{{- printf "%s.%s.svc.cluster.local:%d" (include "private.redis.fullname" .) .Release.Namespace (int $port) }}
+{{- printf "%s:%d" (include "private.redis.fullname" .) (int $port) }}
 {{- end }}
 
 {{/*
@@ -138,11 +138,11 @@ Create the private container init command
 */}}
 {{- define "private.init" -}}
 {{- $cpSettings := "cp /usr/local/share/config/admin-appsettings.json /app/wwwroot/appsettings.json" }}
-{{- $protectTls := "openssl pkcs12 -export -out /usr/local/share/ca-certificates/tls.pfx -inkey /usr/local/share/certificates/tls.key -in /usr/local/share/certificates/tls.crt -password pass:$ASPNETCORE_Kestrel__Certificates__Default__Password" }}
+{{- $protectTls := "openssl pkcs12 -export -out /usr/local/share/ca-certificates/ssl.pfx -inkey /usr/local/share/certificates/ssl.key -in /usr/local/share/certificates/ssl.crt -password pass:$ASPNETCORE_Kestrel__Certificates__Default__Password" }}
 {{- $protectDP := "openssl pkcs12 -export -out /usr/local/share/ca-certificates/dp.pfx -inkey /usr/local/share/certificates/dataProtection.key -in /usr/local/share/certificates/dataProtection.crt -password pass:$DataProtectionOptions__KeyProtectionOptions__X509CertificatePassword" }}
 {{- $protectSK := "openssl pkcs12 -export -out /usr/local/share/ca-certificates/sk.pfx -inkey /usr/local/share/certificates/signingKey.key -in /usr/local/share/certificates/signingKey.crt -password pass:$IdentityServer__Key__KeyProtectionOptions__X509CertificatePassword" }}
-{{- if .Values.ssl.ca.trustCA }}
-{{- $trustCert := "cp /usr/local/share/certificates/tls-ca.key /usr/local/share/ca-certificates/tls-ca.key; cp /usr/local/share/certificates/tls-ca.crt /usr/local/share/ca-certificates/tls-ca.crt; chmod -R 644 /usr/local/share/ca-certificates/; update-ca-certificates" }}
+{{- if .Values.ssl.ca.trust }}
+{{- $trustCert := "cp /usr/local/share/certificates/ca.key /usr/local/share/ca-certificates/ca.key; cp /usr/local/share/certificates/ca.crt /usr/local/share/ca-certificates/ca.crt; chmod -R 644 /usr/local/share/ca-certificates/; update-ca-certificates" }}
 {{- printf "%s; %s; %s; %s; %s" $cpSettings $protectTls $protectDP $protectSK $trustCert }}
 {{- else }}
 {{- printf "%s; %s; %s; %s" $cpSettings $protectTls $protectDP $protectSK }}
