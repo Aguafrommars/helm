@@ -107,13 +107,13 @@ define from subcharts
 Create the connection string
 */}}
 {{- define "private.connectionString" -}}
-{{- if not .Values.mysql.connectionString }}
+{{- if not .Values.connectionString }}
 {{- $name := required "The MySql private.mysql.db.name is required" .Values.mysql.db.name }}
 {{- $user := required "The MySql private.mysql.db.user is required" .Values.mysql.db.user }}
 {{- $pwd := required "The MySql private.mysql.db.password is required" .Values.mysql.db.password }}
 {{- printf "server=%s;uid=%s;pwd=%s;database=%s" (include "private.mysql.fullname" .) $user $pwd $name }}
 {{- else}}
-{{- print .Values.mysql.connectionString }}
+{{- print .Values.connectionString }}
 {{- end }}
 {{- end }}
 

@@ -9,7 +9,9 @@ data:
   ASPNETCORE_Kestrel__Certificates__Default__Path: "/usr/local/share/ca-certificates/ssl.pfx"
   ASPNETCORE_URLS: https://+:80;https://+:443
   ASPNETCORE_HTTPS_PORT: "443"
+  {{- if and .Values.private.seq .Values.private.seq.service }}
   Serilog__WriteTo__0__Args__serverUrl: "{{ include "theidserver.seqUrl" . }}"
+  {{- end }}
   PrivateServerAuthentication__Authority: "{{ include "theidserver.privateUrl" . }}"
   PrivateServerAuthentication__ApiUrl: "{{ include "theidserver.privateUrl" . }}/api"
   ApiAuthentication__Authority: "{{ include "theidserver.privateUrl" . }}"

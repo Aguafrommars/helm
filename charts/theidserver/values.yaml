@@ -81,6 +81,9 @@ tolerations: []
 
 affinity: {}
 
+# override the generated connection string
+connectionString: 
+
 # appSettings.json ovverride
 appSettings:
   ASPNETCORE_URLS: https://+:80;https://+:443
@@ -106,18 +109,21 @@ ssl:
   cn: 
   ipList:
   sanList:
+  validationPeriod: 365
   crt:
   key:
   ca:
+    create: true
     trust: false
     issuer:
+    validationPeriod: 3650
     crt: 
     key: 
 
 # Certificate to crypt data protection keys
 # This certificate can be generate
 dataProtection:
-  create: false
+  create: true
   cn:
   ipList: []
   sanList: []
@@ -126,7 +132,7 @@ dataProtection:
 
 # Certificate to crypt signing keys
 signingKey:
-  create: false
+  create: true
   cn:
   ipList: []
   sanList: []

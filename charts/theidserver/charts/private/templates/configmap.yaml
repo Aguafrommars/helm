@@ -10,7 +10,9 @@ data:
   ASPNETCORE_URLS: "https://+:5443"
   ASPNETCORE_HTTPS_PORT: "5443"
   SignalR__RedisConnectionString: "{{ include "private.redis" . }}"
+  {{- if and .Values.seq .Values.seq.service }}
   Serilog__WriteTo__0__Args__serverUrl: "{{ include "private.seqUrl" . }}"
+  {{- end }}
   {{- range $key, $value := .Values.appSettings }}
   {{ $key }}: {{ $value |quote }}
   {{- end }}

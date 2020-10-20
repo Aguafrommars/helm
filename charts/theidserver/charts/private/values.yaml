@@ -90,13 +90,14 @@ seq:
 mysql:
   enabled: true
   image:
-    tag: 8.0.21
-  connectionString: 
+    tag: 8.0.21  
   db: 
     user: theidserver # The mysql user is required if connectionString is not defined 
     name: theidserver # The mysql name is required if connectionString is not defined
-    forcePassword: true
     password: # The mysql user is required if connectionString is not defined
+
+# override the generated connection string
+connectionString: 
 
 # appSettings.json ovverride
 appSettings:
@@ -122,18 +123,21 @@ ssl:
   cn: 
   ipList:
   sanList:
+  validationPeriod: 365
   crt:
   key:
   ca:
     trust: true
+    create: true
     issuer:
+    validationPeriod: 3650
     crt: 
     key: 
 
 # Certificate to crypt data protection keys
 # This certificate can be generate
 dataProtection:
-  create: false
+  create: true
   cn:
   ipList: []
   sanList: []
@@ -142,7 +146,7 @@ dataProtection:
 
 # Certificate to crypt signing keys
 signingKey:
-  create: false
+  create: true
   cn:
   ipList: []
   sanList: []

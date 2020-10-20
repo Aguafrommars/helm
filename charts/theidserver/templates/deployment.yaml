@@ -43,6 +43,13 @@ spec:
           - configMapRef:
               name: {{ include "theidserver.fullname" . }}-config
           env:
+          {{- if not .Values.appSettings.Proxy }}
+          - name: ConnectionStrings__DefaultConnection
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "theidserver.fullname" . }}-opaque
+                key: ConnectionString
+          {{- end }}
           - name: ASPNETCORE_Kestrel__Certificates__Default__Password
             valueFrom:
               secretKeyRef:
