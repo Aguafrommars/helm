@@ -1,9 +1,7 @@
-# Default values for TheIdServer.
+# Default values for private.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-enabled: true
-  
 replicaCount: 2
 
 image:
@@ -39,22 +37,22 @@ securityContext: {}
   # runAsUser: 1000
 
 service:
-  type: LoadBalancer
+  type: ClusterIP
   ports: 
-    http: 80
-    https: 443
-
+    https: 5443
+    
 ingress:
-  enabled: true
+  enabled: false
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: theidserver.local
+    - host: theidserver.private.local
+      paths: []
   tls: []
-  #  - secretName: theidserver-tls
+  #  - secretName: theidserver-private-tls
   #    hosts:
-  #      - theidserver.local
+  #      - theidserver.private.local
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -81,27 +79,127 @@ tolerations: []
 
 affinity: {}
 
+# Dependencies configuration
+seq:
+  enabled: true
+  image:
+    tag: 2020.3
+mysql:
+  enabled: true
+  image:
+    tag: 8.0.21  
+  db: 
+    user: theidserver # The mysql user is required if connectionString is not defined 
+    name: theidserver # The mysql name is required if connectionString is not defined
+    password: # The mysql user is required if connectionString is not defined
+redis:
+  enabled: true
+
 # override the generated connection string
 connectionString: 
 
 # appSettings.json ovverride
 appSettings:
-  ASPNETCORE_URLS: https://+:80;https://+:443
-  ASPNETCORE_HTTPS_PORT: "443"
-  Proxy: "true"
-  DisableStrictSsl: "false"
-  EnableOpenApiDoc: "false"
-  IdentityServer__Key__Type: KeysRotation
-  IdentityServer__Key__StorageKind: FileSytem
-  IdentityServer__Key__StorageConnectionString: "/usr/local/share/keys/signing"
-  IdentityServer__Key__KeyProtectionOptions__KeyProtectionKind: "X509"
-  DataProtectionOptions__StorageKind: FileSytem
-  DataProtectionOptions__StorageConnectionString: "/usr/local/share/keys/dataprotection"
-  DataProtectionOptions__KeyProtectionOptions__KeyProtectionKind: "X509"
-  ApiAuthentication__IntrospectionDiscoveryPolicy__ValidateIssuerName: "false"
-  SignalR__HubOptions__EnableDetailedErrors: "true"
-  SignalR__UseMessagePack: "true"
-  Serilog__WriteTo__0__Args__apiKey: MYZxOmhzGAwCtEyqLsQS
+  env: []
+  file:
+    SiteOptions:
+      Name: TheIdServer
+    IdentityOptions:
+      UserOptions:
+        AllowedUserNameCharacters: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+ '
+      SignInOptions:
+        RequireConfirmedAccount: false
+    IdentityServerOptions:
+      Endpoints:
+        EnableJwtRequestUri: true
+    AccountOptions:
+      ShowLogoutPrompt: false
+      AutomaticRedirectAfterSignOut: true
+    IdentityServer:
+      Key:
+        Type: KeysRotation
+        StorageKind: EntityFramework
+    DataProtectionOptions:
+      StorageKind: EntityFramework
+    TokenCleanupInterval: '00:05:00'
+    Migrate: true
+    DbType: MySql
+    Seed: true
+    AuthenticatorIssuer: TheIdServer
+    EnableOpenApiDoc: true
+    SwaggerUiSettings:
+      OAuth2Client:
+        ClientId: theidserver-swagger
+        AppName: TheIdServer Swagger UI
+        UsePkceWithAuthorizationCodeGrant: true
+      WithCredentials: true
+    ApiAuthentication:
+      Authority: https://localhost:{{ .Values.service.ports.https }}
+      RequireHttpsMetadata: false
+      SupportedTokens: Both
+      ApiName: theidserveradminapi
+      ApiSecret: 5b556f7c-b3bc-4b5b-85ab-45eed0cb962d
+      EnableCaching: true
+      CacheDuration: '0:10:0'
+      LegacyAudienceValidation: true
+    EmailApiAuthentication:
+      Authority: https://localhost:{{ .Values.service.ports.https }}
+      ApiUrl: https://localhost:{{ .Values.service.ports.https }}/api/email
+      ClientId: public-server
+      ClientSecret: 84137599-13d6-469c-9376-9e372dd2c1bd
+      Scope: theidserveradminapi
+      HttpClientName: email
+    SignalR:
+      HubOptions:
+        EnableDetailedErrors: true
+      UseMessagePack: true
+      RedisOptions:
+        Configuration:
+          ChannelPrefix: TheIdServer
+    Serilog:
+      LevelSwitches:
+        "$controlSwitch": Information
+      MinimumLevel:
+        ControlledBy: "$controlSwitch"
+      WriteTo:
+      - Name: Seq
+        Args:
+          serverUrl: http://localhost:5341
+          controlLevelSwitch: "$controlSwitch"
+          apiKey: DVYuookX2vOq078fuOyJ
+      - Name: Console
+        Args:
+          outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}"
+          theme: Serilog.Sinks.SystemConsole.Themes.AnsiConsoleTheme::Literate, Serilog.Sinks.Console
+      - Name: Debug
+        Args:
+          outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}"
+      Enrich:
+      - FromLogContext
+      - WithMachineName
+      - WithThreadId
+
+adminSettings: 
+  administratorEmail: aguacongas@gmail.com
+  apiBaseUrl: https://localhost:{{ .Values.service.ports.https }}/api
+  loggingOptions:
+    minimum: Warning
+  authenticationPaths:
+    remoteRegisterPath: "/identity/account/register"
+    remoteProfilePath: "/identity/account/manage"
+  userOptions:
+    roleClaim: role
+  providerOptions:
+    authority: https://localhost:{{ .Values.service.ports.https }}/
+    clientId: theidserveradmin
+    defaultScopes:
+    - openid
+    - profile
+    - theidserveradminapi
+    postLogoutRedirectUri: https://localhost:{{ .Values.service.ports.https }}/authentication/logout-callback
+    redirectUri: https://localhost:{{ .Values.service.ports.https }}/authentication/login-callback
+    responseType: code
+  welcomeContenUrl: "/api/welcomefragment"
 
 # Kestrel servers cerificates
 ssl: 
@@ -113,8 +211,8 @@ ssl:
   crt:
   key:
   ca:
+    trust: true
     create: true
-    trust: false
     issuer:
     validationPeriod: 3650
     crt: 

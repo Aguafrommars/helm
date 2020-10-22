@@ -1,6 +1,6 @@
 apiVersion: v2
 name: theidserver
-description: TheIdServer helm chart
+description: TheIdServer theidserver cluster Helm chart for Kubernetes
 
 # A chart can be either an 'application' or a 'library' chart.
 #
@@ -21,19 +21,25 @@ version: 0.1.0
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
 appVersion: 1.1.1
-keywords: 
-  - TheIdServer
-  - IAM
-  - OIDC
-  - OpenId Connect
-  - IdentityServer
-  - IdentityServer4
-home: https://github.com/Aguafrommars/TheIdServer/blob/master/README.md#theidserver
-sources:
-  - https://github.com/Aguafrommars/helm/charts/TheIdServer
-  - https://github.com/Aguafrommars/TheIdServer    
-maitainers:
-  - name: Olivier Lefebvre
-    email: aguacongas@gmail.com
-    url: https://github.com/aguacongas
-icon: https://raw.githubusercontent.com/Aguafrommars/TheIdServer/master/package-icon.png
+
+dependencies:
+  - name: mysql
+    repository: https://charts.bitnami.com/bitnami
+    version: 6.14.10
+    condition: mysql.enabled, global.mysql.enabled
+    tags:
+      - back-end
+      - mysql
+    import-values:
+      - child: service
+        parent: mysql.service
+  - name: seq
+    repository: https://kubernetes-charts.storage.googleapis.com
+    version: 2.3.0
+    condition: seq.enabled, global.seq.enabled
+    tags:
+      - back-end
+      - seq
+    import-values:
+      - child: ingestion.service
+        parent: seq.ingestion

@@ -8,7 +8,7 @@ serviceaccount:
   enabled: false
   
 # Dependencies configuration
-private:
+theidserver:
   enabled: false
   mysql:
     enabled: false

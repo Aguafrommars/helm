@@ -64,11 +64,11 @@ Create the name of the service account to use
 {{/*
 define from subcharts
 */}}
-{{- define "theidserver.seq.fullname" -}}
-{{- if $.Values.private.seq.fullnameOverride }}
-{{- $.Values.private.seq.fullnameOverride | trunc 63 | trimSuffix "-" }}
+{{- define "theidserver.mysql.fullname" -}}
+{{- if $.Values.mysql.fullnameOverride }}
+{{- $.Values.mysql.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
-{{- $name := default "seq" .Values.private.seq.nameOverride }}
+{{- $name := default "mysql" .Values.mysql.nameOverride }}
 {{- if contains $name .Release.Name }}
 {{- .Release.Name | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -77,11 +77,24 @@ define from subcharts
 {{- end }}
 {{- end }}
 
-{{- define "theidserver.private.fullname" -}}
-{{- if $.Values.private.fullnameOverride }}
-{{- $.Values.private.fullnameOverride | trunc 63 | trimSuffix "-" }}
+{{- define "theidserver.redis.fullname" -}}
+{{- if $.Values.redis.fullnameOverride }}
+{{- $.Values.redis.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
-{{- $name := default "private" .Values.private.nameOverride }}
+{{- $name := default "redis" .Values.redis.nameOverride }}
+{{- if contains $name .Release.Name }}
+{{- .Release.Name | trunc 63 | trimSuffix "-" }}
+{{- else }}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{- define "theidserver.seq.fullname" -}}
+{{- if .Values.seq.fullnameOverride }}
+{{- .Values.seq.fullnameOverride | trunc 63 | trimSuffix "-" }}
+{{- else }}
+{{- $name := default "seq" .Values.seq.nameOverride }}
 {{- if contains $name .Release.Name }}
 {{- .Release.Name | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -95,10 +108,10 @@ Create the connection string
 */}}
 {{- define "theidserver.connectionString" -}}
 {{- if not .Values.connectionString }}
-{{- $name := required "The MySql private.mysql.db.name is required" .Values.mysql.db.name }}
-{{- $user := required "The MySql private.mysql.db.user is required" .Values.mysql.db.user }}
-{{- $pwd := required "The MySql private.mysql.db.password is required" .Values.mysql.db.password }}
-{{- printf "server=%s;uid=%s;pwd=%s;database=%s" (include "private.mysql.fullname" .) $user $pwd $name }}
+{{- $name := required "The MySql mysql.db.name is required" .Values.mysql.db.name }}
+{{- $user := required "The MySql mysql.db.user is required" .Values.mysql.db.user }}
+{{- $pwd := required "The MySql mysql.db.password is required" .Values.mysql.db.password }}
+{{- printf "server=%s;uid=%s;pwd=%s;database=%s" (include "theidserver.mysql.fullname" .) $user $pwd $name }}
 {{- else}}
 {{- print .Values.connectionString }}
 {{- end }}
@@ -108,54 +121,29 @@ Create the connection string
 Create the seq url
 */}}
 {{- define "theidserver.seqUrl" -}}
-{{ $port := default 5341 .Values.private.seq.service.port }}
+{{ $port := default 5341 .Values.seq.ingestion.service.port }}
 {{- printf "http://%s:%d" (include "theidserver.seq.fullname" .) (int $port) }}
 {{- end }}
 
 {{/*
-Create the private url
+Create the redis connection string
 */}}
-{{- define "theidserver.privateUrl" -}}
-{{ $port := default 5443 .Values.private.service.port }}
-{{- printf "https://%s:%d" (include "theidserver.private.fullname" .) (int $port) }}
-{{- end }}
-
-{{/*
-Create the service url
-*/}}
-{{- define "theidserver.url" -}}
-{{ $host := "localhost" }}
-{{- if .Values.ingress.enabled }}
-{{ with index .Values.ingress.hosts 0 }}
-{{ $host = .host }}
-{{- end }}
-{{- $port := .Values.service.ports.https }}
-{{- if eq 443 (int $port) }}
-{{- printf "https://%s" $host }}
-{{- else }}
-{{- printf "https://%s:%d" $host (int $port) }}
-{{- end }}
-{{- end }}
+{{- define "theidserver.redis" -}}
+{{ $port := default 6379 .Values.redis.service.port }}
+{{- printf "%s:%d" (include "redis.fullname" .) (int $port) }}
 {{- end }}
 
 {{/*
 Create the theidserver container init command
 */}}
 {{- define "theidserver.init" -}}
-{{- $cpSettings := "cp /usr/local/share/config/admin-appsettings.json /app/wwwroot/appsettings.json" }}
+{{- $cpSettings := "cp /usr/local/share/config/appsettings.json /app/appsettings.json; cp /usr/local/share/config/admin-appsettings.json /app/wwwroot/appsettings.json" }}
 {{- $protectTls := "openssl pkcs12 -export -out /usr/local/share/ca-certificates/ssl.pfx -inkey /usr/local/share/certificates/ssl.key -in /usr/local/share/certificates/ssl.crt -password pass:$ASPNETCORE_Kestrel__Certificates__Default__Password" }}
 {{- $protectDP := "openssl pkcs12 -export -out /usr/local/share/ca-certificates/dp.pfx -inkey /usr/local/share/certificates/dataProtection.key -in /usr/local/share/certificates/dataProtection.crt -password pass:$DataProtectionOptions__KeyProtectionOptions__X509CertificatePassword" }}
 {{- $protectSK := "openssl pkcs12 -export -out /usr/local/share/ca-certificates/sk.pfx -inkey /usr/local/share/certificates/signingKey.key -in /usr/local/share/certificates/signingKey.crt -password pass:$IdentityServer__Key__KeyProtectionOptions__X509CertificatePassword" }}
-{{- $trustPrivateCert := "" }}
-{{- if .Values.private.ssl.ca.trust }}
-{{- $trustPrivateCert = "; cp /usr/local/share/private-certificates/ca.key /usr/local/share/ca-certificates/private-ca.key; cp /usr/local/share/private-certificates/ca.crt /usr/local/share/ca-certificates/private-ca.crt" }}
-{{- end }}
-{{- $trustCert := "" }}
 {{- if .Values.ssl.ca.trust }}
-{{- $trustCert = "; cp /usr/local/share/certificates/ca.key /usr/local/share/ca-certificates/ca.key; cp /usr/local/share/certificates/ca.crt /usr/local/share/ca-certificates/ca.crt" }}
-{{- end }}
-{{- if or .Values.private.ssl.ca.trust .Values.ssl.ca.trust }}
-{{- printf "%s; %s; %s; %s%s%s; chmod -R 644 /usr/local/share/ca-certificates/; update-ca-certificates" $cpSettings $protectTls $protectDP $protectSK $trustPrivateCert $trustCert }}
+{{- $trustCert := "cp /usr/local/share/certificates/ca.key /usr/local/share/ca-certificates/ca.key; cp /usr/local/share/certificates/ca.crt /usr/local/share/ca-certificates/ca.crt; chmod -R 644 /usr/local/share/ca-certificates/; update-ca-certificates" }}
+{{- printf "%s; %s; %s; %s; %s" $cpSettings $protectTls $protectDP $protectSK $trustCert }}
 {{- else }}
 {{- printf "%s; %s; %s; %s" $cpSettings $protectTls $protectDP $protectSK }}
 {{- end }}
