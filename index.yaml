@@ -1,0 +1,35 @@
+apiVersion: v1
+entries:
+  theidserver:
+  - apiVersion: v2
+    appVersion: 1.1.1
+    created: "2020-10-22T16:38:18.421906637Z"
+    dependencies:
+    - condition: mysql.enabled, global.mysql.enabled
+      import-values:
+      - child: service
+        parent: mysql.service
+      name: mysql
+      repository: https://charts.bitnami.com/bitnami
+      tags:
+      - back-end
+      - mysql
+      version: 6.14.10
+    - condition: seq.enabled, global.seq.enabled
+      import-values:
+      - child: ingestion.service
+        parent: seq.ingestion
+      name: seq
+      repository: https://kubernetes-charts.storage.googleapis.com
+      tags:
+      - back-end
+      - seq
+      version: 2.3.0
+    description: TheIdServer theidserver cluster Helm chart for Kubernetes
+    digest: ca47d455de6153aed9b850ebb9f906e44221e8fb1f580277d26a8d04ed17597d
+    name: theidserver
+    type: application
+    urls:
+    - theidserver-0.1.0.tgz
+    version: 0.1.0
+generated: "2020-10-22T16:38:18.415578559Z"
