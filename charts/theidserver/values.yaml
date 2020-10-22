@@ -48,7 +48,6 @@ ingress:
     # kubernetes.io/tls-acme: "true"
   hosts:
     - host: theidserver.private.local
-      paths: []
   tls: []
   #  - secretName: theidserver-private-tls
   #    hosts:
@@ -100,7 +99,9 @@ connectionString:
 
 # appSettings.json ovverride
 appSettings:
+  # by env vars
   env: []
+  # by appsetting.json file
   file:
     SiteOptions:
       Name: TheIdServer
@@ -179,6 +180,7 @@ appSettings:
       - WithMachineName
       - WithThreadId
 
+## admin ui configuration
 adminSettings: 
   administratorEmail: aguacongas@gmail.com
   apiBaseUrl: https://localhost:{{ .Values.service.ports.https }}/api

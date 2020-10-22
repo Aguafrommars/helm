@@ -262,5 +262,52 @@ NOTES:
   kubectl --namespace theidserver port-forward $POD_NAME 8080:5443
   ```
 
-## Customize configuration
+## Configuration
+
+The following table lists configurable parameters of the TheIdServer chart and their default values.
+
+|Parameter|Description|Default|Remarks|
+|-|-|-|-|
+|`replicaCount`|Number of pod to create when autoscalling is disabled|2||
+|`image.repository`|Image repository|`aguacongas/theidserver`||
+|`image.pullPolicy`|Image pull policy|`IfNotPresent`||
+|`image.tag`|Image tag|`1.1.1`|Possible values listed [here](https://hub.docker.com/r/aguacongas/theidserver/tags)|
+|`imagePullSecrets`|Docker registry secret names as an array|`[]`||
+|`nameOverride`|String to partially override fullname template with a string (will prepend the release name)|`nil`||
+|`fullnameOverride`|String to fully override fullname template with a string|`nil`||
+|`serviceAccount.create`|Specifies whether a ServiceAccount should be created|`true`||
+|`serviceAccount.annotations`|Annotations to add to the service account|`{}`||
+|`serviceAccount.name`|The name of the service account to use|`nil`|If not set and create is true, a name is generated using the fullname template|
+|`podAnnotations`|Annotations to add to pods|`{}`||
+|`podSecurityContext`|Pods security context|`{}`||
+|`securityContext`|Containers security context|`ClusterIP`||
+|`service.ports.https`|TheIdServer HTTPS service ports|`5443`||
+|`service.ports.http`|TheIdServer HTTP service ports|`nil`|By default the HTTP port is not enabled. When enable, HTTP requests are redirected to HTTPS|
+|`ingress.enabled`|Specifies whether a Ingress should be created|`false`||
+|`ingress.annotations`|Annotations to add to the ingress|`{}`||
+|`ingress.hosts`|Ingress accepted hostnames|`[theidserver.private.local]`||
+|`ingress.tls`|Ingress TLS configuration|`[]`||
+|`resources`|CPU/Memory resource requests/limits|`{}`||
+|`autoscaling.enabled`|Specifies whether to enable autoscaling|`false`||
+|`autoscaling.minReplicas`|Minimum number of workers when using autoscaling|`1`||
+|`autoscaling.maxReplicas`|Maximum number of workers when using autoscaling|`100`||
+|`autoscaling.targetCPUUtilizationPercentage`|Target CPU utilisation percentage to scale|`80`||
+|`nodeSelector`|Node selector labels for pod assignment|`{}`||
+|`tolerations`|Toleration for pod assignment|`{}`||
+|`affinity`|Affinity  for pod assignment|`{}`||
+|`seq.enabled`|Specifies whether a SEQ server should be created|`true`||
+|`seq.image.tag`|Specifies whether a SEQ server should be created|`2020.3`||
+|`seq`|Maps [Seq chart](https://github.com/helm/charts/blob/ef4f1766e1538b5488b9d43f32f21a9ac3765dbe/stable/seq) parameters|`{}`|Possible values described [here](https://github.com/helm/charts/blob/ef4f1766e1538b5488b9d43f32f21a9ac3765dbe/stable/seq/README.md)|
+|`mysql.enabled`|Specifies whether a MySql cluster should be created|`true`||
+|`mysql.image.tag`|Specifies whether a SEQ server should be created|`8.0.21`||
+|`mysql`|Maps [MySql chart](https://github.com/bitnami/charts/blob/master/bitnami/mysql/README.md) parameters|`{}`|Possible values described [here](https://github.com/bitnami/charts/blob/master/bitnami/mysql/README.md#parameters)|
+|`redis.enabled`|Specifies whether a Redis server should be created|`true`||
+|`redis`|Maps Redis chart parameters|`{}`|Possible values described [here](charts/redis/README.md)|
+|`connectionString`|When set, overrides the generated connection string|`nil`|Use this parameter if you don't install the MySql cluster, don't set `appSettings.file.ConnectionStrings.DefaultConnection`. The connection string is stored in a secret|
+|`appSettings.env`|Overrides the server appsettings.json by env vars|`[]`||
+|`appSettings.file`|Overrides the server appsettings.json file|`{}`|The server configuration is describe [here](https://github.com/Aguafrommars/TheIdServer/blob/master/src/Aguacongas.TheIdServer/README.md)|
+|`adminSettings`|Overrides the admin ui appsettings.json file|`{}`|The admin ui configuration is describe [here](https://github.com/Aguafrommars/TheIdServer/blob/master/src/Aguacongas.TheIdServer.BlazorApp/README.md)|
+|`ssl`|Configure Kestrel SSL certificates||See **Upgrade** section for mode information|
+|`dataProtection`|Configure the certificate to crypt data protection keys||See **Upgrade** section for mode information|
+|`signingKey`|Configure the certificate to crypt signing keys||See **Upgrade** section for mode information|
 
