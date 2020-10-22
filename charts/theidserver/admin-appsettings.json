@@ -1,0 +1,27 @@
+{
+  "administratorEmail": "aguacongas@gmail.com",
+  "apiBaseUrl": "{{ include "theidserver.url" . | trimAll "\n" }}/api",
+  "loggingOptions": {
+    "minimum": "Warning"
+  },
+  "authenticationPaths": {
+    "remoteRegisterPath": "/identity/account/register",
+    "remoteProfilePath": "/identity/account/manage"
+  },
+  "userOptions": {
+    "roleClaim": "role"
+  },
+  "providerOptions": {
+    "authority": "{{ include "theidserver.url" . | trimAll "\n" }}",
+    "clientId": "theidserveradmin",
+    "defaultScopes": [
+      "openid",
+      "profile",
+      "theidserveradminapi"
+    ],
+    "postLogoutRedirectUri": "{{ include "theidserver.url" . | trimAll "\n" }}/authentication/logout-callback",
+    "redirectUri": "{{ include "theidserver.url" . | trimAll "\n" }}/authentication/login-callback",
+    "responseType": "code"
+  },
+  "welcomeContenUrl": "/api/welcomefragment"
+}

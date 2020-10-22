@@ -1,0 +1,123 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "theidserver.fullname" . }}
+  labels:
+    {{- include "theidserver.labels" . | nindent 4 }}
+spec:
+{{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+{{- end }}
+  selector:
+    matchLabels:
+      {{- include "theidserver.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "theidserver.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "theidserver.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+          {{- range $key, $value := .Values.service.ports }}
+            - containerPort: {{ $value }}
+              name: {{ $key }}
+          {{- end }}
+          envFrom: 
+          - configMapRef:
+              name: {{ include "theidserver.fullname" . }}-config
+          env:
+          - name: ConnectionStrings__DefaultConnection
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "theidserver.fullname" . }}-opaque
+                key: ConnectionString
+          - name: ASPNETCORE_Kestrel__Certificates__Default__Password
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "theidserver.fullname" . }}-opaque
+                key: ssl.pwd
+          - name: IdentityServer__Key__KeyProtectionOptions__X509CertificatePassword
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "theidserver.fullname" . }}-opaque
+                key: dataProtection.pwd
+          - name: DataProtectionOptions__KeyProtectionOptions__X509CertificatePassword
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "theidserver.fullname" . }}-opaque
+                key: signingKey.pwd
+          volumeMounts:
+          - name: certificates-secret
+            mountPath: /usr/local/share/certificates
+          - name: pxf-volume
+            mountPath: /usr/local/share/ca-certificates
+          - name: config
+            mountPath: /usr/local/share/config
+          lifecycle:
+            postStart:
+              exec:
+                command: 
+                - "/bin/bash"
+                - "-c"
+                - {{ include "theidserver.init" . | quote }}
+          livenessProbe:
+            httpGet:
+              scheme: HTTPS
+              path: /.well-known/openid-configuration
+              port: https
+          readinessProbe:
+            httpGet:
+              scheme: HTTPS
+              path: /.well-known/openid-configuration
+              port: https
+          startupProbe:
+            httpGet:
+              scheme: HTTPS
+              path: /.well-known/openid-configuration
+              port: https
+            failureThreshold: 30
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+      - name: certificates-secret
+        secret:
+          secretName: {{ include "theidserver.fullname" . }}-certs
+      - name: pxf-volume
+        emptyDir: {}        
+      - name: config
+        configMap:
+          name: {{ include "theidserver.fullname" . }}-config-files
+          items:
+          - key: admin-appsettings.json
+            path: admin-appsettings.json
+          - key: appsettings.json
+            path: appsettings.json
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

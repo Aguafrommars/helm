@@ -1,0 +1,240 @@
+# Default values for private.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 2
+
+image:
+  repository: aguacongas/theidserver
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "1.1.1"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  ports: 
+    https: 5443
+    
+ingress:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: theidserver.private.local
+  tls: []
+  #  - secretName: theidserver-private-tls
+  #    hosts:
+  #      - theidserver.private.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Dependencies configuration
+seq:
+  enabled: true
+  image:
+    tag: 2020.3
+mysql:
+  enabled: true
+  image:
+    tag: 8.0.21  
+  db: 
+    user: theidserver # The mysql user is required if connectionString is not defined 
+    name: theidserver # The mysql name is required if connectionString is not defined
+    password: # The mysql user is required if connectionString is not defined
+redis:
+  enabled: true
+
+# override the generated connection string
+connectionString: 
+
+# appSettings.json ovverride
+appSettings:
+  # by env vars
+  env: []
+  # by appsetting.json file
+  file:
+    SiteOptions:
+      Name: TheIdServer
+    IdentityOptions:
+      UserOptions:
+        AllowedUserNameCharacters: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+ '
+      SignInOptions:
+        RequireConfirmedAccount: false
+    IdentityServerOptions:
+      Endpoints:
+        EnableJwtRequestUri: true
+    AccountOptions:
+      ShowLogoutPrompt: false
+      AutomaticRedirectAfterSignOut: true
+    IdentityServer:
+      Key:
+        Type: KeysRotation
+        StorageKind: EntityFramework
+    DataProtectionOptions:
+      StorageKind: EntityFramework
+    TokenCleanupInterval: '00:05:00'
+    Migrate: true
+    DbType: MySql
+    Seed: true
+    AuthenticatorIssuer: TheIdServer
+    EnableOpenApiDoc: true
+    SwaggerUiSettings:
+      OAuth2Client:
+        ClientId: theidserver-swagger
+        AppName: TheIdServer Swagger UI
+        UsePkceWithAuthorizationCodeGrant: true
+      WithCredentials: true
+    ApiAuthentication:
+      Authority: https://localhost:{{ .Values.service.ports.https }}
+      RequireHttpsMetadata: false
+      SupportedTokens: Both
+      ApiName: theidserveradminapi
+      ApiSecret: 5b556f7c-b3bc-4b5b-85ab-45eed0cb962d
+      EnableCaching: true
+      CacheDuration: '0:10:0'
+      LegacyAudienceValidation: true
+    EmailApiAuthentication:
+      Authority: https://localhost:{{ .Values.service.ports.https }}
+      ApiUrl: https://localhost:{{ .Values.service.ports.https }}/api/email
+      ClientId: public-server
+      ClientSecret: 84137599-13d6-469c-9376-9e372dd2c1bd
+      Scope: theidserveradminapi
+      HttpClientName: email
+    SignalR:
+      HubOptions:
+        EnableDetailedErrors: true
+      UseMessagePack: true
+      RedisOptions:
+        Configuration:
+          ChannelPrefix: TheIdServer
+    Serilog:
+      LevelSwitches:
+        "$controlSwitch": Information
+      MinimumLevel:
+        ControlledBy: "$controlSwitch"
+      WriteTo:
+      - Name: Seq
+        Args:
+          serverUrl: http://localhost:5341
+          controlLevelSwitch: "$controlSwitch"
+          apiKey: DVYuookX2vOq078fuOyJ
+      - Name: Console
+        Args:
+          outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}"
+          theme: Serilog.Sinks.SystemConsole.Themes.AnsiConsoleTheme::Literate, Serilog.Sinks.Console
+      - Name: Debug
+        Args:
+          outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}"
+      Enrich:
+      - FromLogContext
+      - WithMachineName
+      - WithThreadId
+
+## admin ui configuration
+adminSettings: 
+  administratorEmail: aguacongas@gmail.com
+  apiBaseUrl: https://localhost:{{ .Values.service.ports.https }}/api
+  loggingOptions:
+    minimum: Warning
+  authenticationPaths:
+    remoteRegisterPath: "/identity/account/register"
+    remoteProfilePath: "/identity/account/manage"
+  userOptions:
+    roleClaim: role
+  providerOptions:
+    authority: https://localhost:{{ .Values.service.ports.https }}/
+    clientId: theidserveradmin
+    defaultScopes:
+    - openid
+    - profile
+    - theidserveradminapi
+    postLogoutRedirectUri: https://localhost:{{ .Values.service.ports.https }}/authentication/logout-callback
+    redirectUri: https://localhost:{{ .Values.service.ports.https }}/authentication/login-callback
+    responseType: code
+  welcomeContenUrl: "/api/welcomefragment"
+
+# Kestrel servers cerificates
+ssl: 
+  create: true
+  cn: 
+  ipList:
+  sanList:
+  validationPeriod: 365
+  crt:
+  key:
+  ca:
+    trust: true
+    create: true
+    issuer:
+    validationPeriod: 3650
+    crt: 
+    key: 
+
+# Certificate to crypt data protection keys
+# This certificate can be generate
+dataProtection:
+  create: true
+  cn:
+  ipList: []
+  sanList: []
+  crt:
+  key:
+
+# Certificate to crypt signing keys
+signingKey:
+  create: true
+  cn:
+  ipList: []
+  sanList: []
+  crt:
+  key:

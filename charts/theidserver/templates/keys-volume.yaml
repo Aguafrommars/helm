@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "theidserver.fullname" . }}-keys
+  labels:
+    {{- include "theidserver.labels" . | nindent 4 }}
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+   requests:
+    storage: 10Mi
