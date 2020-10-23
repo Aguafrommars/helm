@@ -34,20 +34,28 @@ jobs:
         shell: bash
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         id: extract_branch
-      - name: Semantic release
+      - name: Get version 
         id: semantic
         uses: cycjimmy/semantic-release-action@v2
         with:
           dry_run: true
-          branches: |
-            [ 
-              {name: '${{ steps.extract_branch.outputs.branch }}'}
-            ] 
+          branch: "${{ steps.extract_branch.outputs.branch }}"
           extra_plugins: |
             @semantic-release/changelog
             @semantic-release/git
             @semantic-release/exec
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
-      - name: Get version
-        run: echo ${{ steps.semantic.outputs.new_release_version }}
+      - name: Set version
+        run: yq w Chart.yaml version ${{ steps.semantic.outputs.new_release_version }} >> Chart.yaml
+      - name: Release
+        if: ${{ github.event_name == "push" }}
+        uses: cycjimmy/semantic-release-action@v2
+        with:
+          branch: "${{ steps.extract_branch.outputs.branch }}"
+          extra_plugins: |
+            @semantic-release/changelog
+            @semantic-release/git
+            @semantic-release/exec
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
