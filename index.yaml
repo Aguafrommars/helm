@@ -3,7 +3,54 @@ entries:
   theidserver:
   - apiVersion: v2
     appVersion: 1.1.1
-    created: "2020-10-22T16:38:18.421906637Z"
+    created: "2020-10-23T06:21:44.472565657Z"
+    dependencies:
+    - condition: mysql.enabled, global.mysql.enabled
+      import-values:
+      - child: service
+        parent: mysql.service
+      name: mysql
+      repository: https://charts.bitnami.com/bitnami
+      tags:
+      - back-end
+      - mysql
+      version: 6.14.10
+    - condition: seq.enabled, global.seq.enabled
+      import-values:
+      - child: ingestion.service
+        parent: seq.ingestion
+      name: seq
+      repository: https://kubernetes-charts.storage.googleapis.com
+      tags:
+      - back-end
+      - seq
+      version: 2.3.0
+    description: TheIdServer cluster Helm chart for Kubernetes
+    digest: 9c8092fe980469ab6d2a4a4f2b7f4e2460d100d4991ebec2fd7b1495de0c1639
+    home: https://github.com/Aguafrommars/TheIdServer
+    icon: https://raw.githubusercontent.com/Aguafrommars/TheIdServer/master/package-icon.png
+    keywords:
+    - oidc
+    - openid-connect
+    - oauth
+    - identityserver4
+    - admin-ui
+    - iam
+    maintainers:
+    - email: aguacongas@gmail.com
+      name: Olivier Lefebvre
+      url: https://github.com/aguacongas
+    name: theidserver
+    sources:
+    - https://github.com/Aguafrommars/TheIdServer
+    - https://github.com/Aguafrommars/helm/tree/main/charts/theidserver
+    type: application
+    urls:
+    - theidserver-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
+    appVersion: 1.1.1
+    created: "2020-10-23T06:21:44.450885436Z"
     dependencies:
     - condition: mysql.enabled, global.mysql.enabled
       import-values:
@@ -32,4 +79,4 @@ entries:
     urls:
     - theidserver-0.1.0.tgz
     version: 0.1.0
-generated: "2020-10-22T16:38:18.415578559Z"
+generated: "2020-10-23T06:21:44.44457093Z"
