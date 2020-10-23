@@ -41,6 +41,7 @@ jobs:
           dry_run: true
           branches: |
             [ 
+              'master',
               '${{ steps.extract_branch.outputs.branch }}' 
             ] 
           extra_plugins: |
