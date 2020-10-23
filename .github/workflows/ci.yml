@@ -30,11 +30,16 @@ jobs:
           sudo apt install yq -y
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
       - name: Semantic release
         id: semantic
         uses: cycjimmy/semantic-release-action@v2
         with:
           dry_run: true
+          branch: ${{ steps.extract_branch.outputs.branch }}
           extra_plugins: |
             @semantic-release/changelog
             @semantic-release/git
