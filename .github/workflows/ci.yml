@@ -47,15 +47,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
       - name: Set version
+        if: contains('.', steps.semantic.outputs.new_release_version)
         run: yq w Chart.yaml version ${{ steps.semantic.outputs.new_release_version }} >> Chart.yaml
-      - name: Release
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: cycjimmy/semantic-release-action@v2
-        with:
-          branch: "${{ steps.extract_branch.outputs.branch }}"
-          extra_plugins: |
-            @semantic-release/changelog
-            @semantic-release/git
-            @semantic-release/exec
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
+      
