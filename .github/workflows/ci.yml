@@ -41,7 +41,10 @@ jobs:
         uses: cycjimmy/semantic-release-action@v2
         with:
           dry_run: true
-          branch: ${{ env.BRANCH_NAME }}
+          branches: |
+            [ 
+              '${{ env.BRANCH_NAME }}' 
+            ] 
           extra_plugins: |
             @semantic-release/changelog
             @semantic-release/git
