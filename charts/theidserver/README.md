@@ -6,8 +6,8 @@
 
 Add the repository to helm :
 ``` bash
-❯ helm repo add aguafrommars https://aguafrommars.github.io/helm
-❯ helm install aguafrommars theidserver --set theidserver.mysql.db.password=my-P@ssword
+❯ helm repo add agua https://aguafrommars.github.io/helm
+❯ helm install aguafrommars agua/theidserver --set mysql.db.password=my-P@ssword
 ```
 
 This install:
