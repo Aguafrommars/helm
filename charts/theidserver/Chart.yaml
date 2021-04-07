@@ -15,12 +15,12 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 0.1.1
+version: 0.1.2
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
-appVersion: 1.1.1
+appVersion: 2.3.0
 
 # The list of keywords about this project
 keywords:
@@ -50,7 +50,7 @@ icon: https://raw.githubusercontent.com/Aguafrommars/TheIdServer/master/package-
 dependencies:
   - name: mysql
     repository: https://charts.bitnami.com/bitnami
-    version: 6.14.10
+    version: 8.5.1
     condition: mysql.enabled, global.mysql.enabled
     tags:
       - back-end
@@ -59,12 +59,13 @@ dependencies:
       - child: service
         parent: mysql.service
   - name: seq
-    repository: https://kubernetes-charts.storage.googleapis.com
-    version: 2.3.0
+    repository: https://helm.datalust.co
+    version: 2021.2.5595
     condition: seq.enabled, global.seq.enabled
     tags:
       - back-end
       - seq
     import-values:
       - child: ingestion.service
-        parent: seq.ingestion
+        parent: 
+          seq.ingestionapiVersion: v2

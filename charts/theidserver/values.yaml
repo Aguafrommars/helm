@@ -8,7 +8,7 @@ image:
   repository: aguacongas/theidserver
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.1.1"
+  tag: 
 
 imagePullSecrets: []
 nameOverride: ""
@@ -82,11 +82,11 @@ affinity: {}
 seq:
   enabled: true
   image:
-    tag: 2020.3
+    tag: 2021.2.5595
 mysql:
   enabled: true
   image:
-    tag: 8.0.21  
+    tag: 8.0.23
   db: 
     user: theidserver # The mysql user is required if connectionString is not defined 
     name: theidserver # The mysql name is required if connectionString is not defined
