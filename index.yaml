@@ -2,8 +2,56 @@ apiVersion: v1
 entries:
   theidserver:
   - apiVersion: v2
+    appVersion: 2.3.0
+    created: "2021-04-07T19:28:44.563722408Z"
+    dependencies:
+    - condition: mysql.enabled, global.mysql.enabled
+      import-values:
+      - child: service
+        parent: mysql.service
+      name: mysql
+      repository: https://charts.bitnami.com/bitnami
+      tags:
+      - back-end
+      - mysql
+      version: 8.5.1
+    - condition: seq.enabled, global.seq.enabled
+      import-values:
+      - child: ingestion.service
+        parent:
+          seq.ingestionapiVersion: v2
+      name: seq
+      repository: https://helm.datalust.co
+      tags:
+      - back-end
+      - seq
+      version: 2021.2.5595
+    description: TheIdServer cluster Helm chart for Kubernetes
+    digest: 0f9df98e65e838012b045c31a8e2746c0c5b5288f33dfe86e0c915f0c0a5fc4f
+    home: https://github.com/Aguafrommars/TheIdServer
+    icon: https://raw.githubusercontent.com/Aguafrommars/TheIdServer/master/package-icon.png
+    keywords:
+    - oidc
+    - openid-connect
+    - oauth
+    - identityserver4
+    - admin-ui
+    - iam
+    maintainers:
+    - email: aguacongas@gmail.com
+      name: Olivier Lefebvre
+      url: https://github.com/aguacongas
+    name: theidserver
+    sources:
+    - https://github.com/Aguafrommars/TheIdServer
+    - https://github.com/Aguafrommars/helm/tree/main/charts/theidserver
+    type: application
+    urls:
+    - theidserver-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v2
     appVersion: 1.1.1
-    created: "2020-10-23T06:21:44.472565657Z"
+    created: "2021-04-07T19:28:44.554634456Z"
     dependencies:
     - condition: mysql.enabled, global.mysql.enabled
       import-values:
@@ -50,7 +98,7 @@ entries:
     version: 0.1.1
   - apiVersion: v2
     appVersion: 1.1.1
-    created: "2020-10-23T06:21:44.450885436Z"
+    created: "2021-04-07T19:28:44.5482824Z"
     dependencies:
     - condition: mysql.enabled, global.mysql.enabled
       import-values:
@@ -79,4 +127,4 @@ entries:
     urls:
     - theidserver-0.1.0.tgz
     version: 0.1.0
-generated: "2020-10-23T06:21:44.44457093Z"
+generated: "2021-04-07T19:28:44.54033983Z"
