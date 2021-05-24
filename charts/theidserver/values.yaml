@@ -82,11 +82,11 @@ affinity: {}
 seq:
   enabled: true
   image:
-    tag: 2021.2.5595
+    tag: 2021.2.5647
 mysql:
   enabled: true
   image:
-    tag: 8.0.23
+    tag: 8.0.25
   db: 
     user: theidserver # The mysql user is required if connectionString is not defined 
     name: theidserver # The mysql name is required if connectionString is not defined
