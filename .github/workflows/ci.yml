@@ -40,9 +40,10 @@ jobs:
         with:
           dry_run: true
           branches: |
-            [
-              '${{ steps.extract_branch.outputs.branch }}'
-            ]
+            [ 
+              'main',
+              '${{ steps.extract_branch.outputs.branch }}' 
+            ]            
           extra_plugins: |
             @semantic-release/changelog
             @semantic-release/git
