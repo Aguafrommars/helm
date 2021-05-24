@@ -39,7 +39,10 @@ jobs:
         uses: cycjimmy/semantic-release-action@v2
         with:
           dry_run: true
-          branch: "${{ steps.extract_branch.outputs.branch }}"
+          branches: |
+            [
+              '${{ steps.extract_branch.outputs.branch }}'
+            ]
           extra_plugins: |
             @semantic-release/changelog
             @semantic-release/git
