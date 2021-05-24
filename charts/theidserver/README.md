@@ -1,6 +1,6 @@
 # TheIdServer
 
-[TheIdServer](https://github.com/Aguafrommars/TheIdServer) is an [OpenID/Connect](https://openid.net/connect/) server based on [IdentityServer4](https://identityserver4.readthedocs.io/en/latest/).
+[TheIdServer](https://github.com/Aguafrommars/TheIdServer) is an [OpenID/Connect](https://openid.net/connect/), [OAuth2](https://oauth.net/2/) and [WS-Federation](https://docs.oasis-open.org/wsfed/federation/v1.2/os/ws-federation-1.2-spec-os.html) server based on [IdentityServer4](https://identityserver4.readthedocs.io/en/latest/).
 
 ## Install
 
