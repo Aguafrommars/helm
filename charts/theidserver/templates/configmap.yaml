@@ -17,5 +17,3 @@ data:
   ASPNETCORE_URLS: "https://+:{{ required "service.ports.https is required" .Values.service.ports.https }}"
   ASPNETCORE_HTTPS_PORT: "{{ required "service.ports.https is required" .Values.service.ports.https }}"
   ASPNETCORE_Kestrel__Certificates__Default__Path: "/usr/local/share/ca-certificates/ssl.pfx"
-  IdentityServer__Key__KeyProtectionOptions__X509CertificatePath: /usr/local/share/ca-certificates/sk.pfx
-  DataProtectionOptions__KeyProtectionOptions__X509CertificatePath: /usr/local/share/ca-certificates/dp.pfx

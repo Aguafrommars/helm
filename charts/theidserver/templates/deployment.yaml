@@ -52,16 +52,6 @@ spec:
               secretKeyRef:
                 name: {{ include "theidserver.fullname" . }}-opaque
                 key: ssl.pwd
-          - name: IdentityServer__Key__KeyProtectionOptions__X509CertificatePassword
-            valueFrom:
-              secretKeyRef:
-                name: {{ include "theidserver.fullname" . }}-opaque
-                key: dataProtection.pwd
-          - name: DataProtectionOptions__KeyProtectionOptions__X509CertificatePassword
-            valueFrom:
-              secretKeyRef:
-                name: {{ include "theidserver.fullname" . }}-opaque
-                key: signingKey.pwd
           volumeMounts:
           - name: certificates-secret
             mountPath: /usr/local/share/certificates

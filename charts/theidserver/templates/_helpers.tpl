@@ -108,9 +108,9 @@ Create the connection string
 */}}
 {{- define "theidserver.connectionString" -}}
 {{- if not .Values.connectionString }}
-{{- $name := required "The MySql mysql.db.name is required" .Values.mysql.db.name }}
-{{- $user := required "The MySql mysql.db.user is required" .Values.mysql.db.user }}
-{{- $pwd := required "The MySql mysql.db.password is required" .Values.mysql.db.password }}
+{{- $name := required "The MySql mysql.auth.name is required" .Values.mysql.auth.name }}
+{{- $user := required "The MySql mysql.auth.user is required" .Values.mysql.auth.user }}
+{{- $pwd := required "The MySql mysql.auth.password is required" .Values.mysql.auth.password }}
 {{- printf "server=%s;uid=%s;pwd=%s;database=%s" (include "theidserver.mysql.fullname" .) $user $pwd $name }}
 {{- else}}
 {{- print .Values.connectionString }}
@@ -139,12 +139,10 @@ Create the theidserver container init command
 {{- define "theidserver.init" -}}
 {{- $cpSettings := "cp /usr/local/share/config/appsettings.json /app/appsettings.json; cp /usr/local/share/config/admin-appsettings.json /app/wwwroot/appsettings.json" }}
 {{- $protectTls := "openssl pkcs12 -export -out /usr/local/share/ca-certificates/ssl.pfx -inkey /usr/local/share/certificates/ssl.key -in /usr/local/share/certificates/ssl.crt -password pass:$ASPNETCORE_Kestrel__Certificates__Default__Password" }}
-{{- $protectDP := "openssl pkcs12 -export -out /usr/local/share/ca-certificates/dp.pfx -inkey /usr/local/share/certificates/dataProtection.key -in /usr/local/share/certificates/dataProtection.crt -password pass:$DataProtectionOptions__KeyProtectionOptions__X509CertificatePassword" }}
-{{- $protectSK := "openssl pkcs12 -export -out /usr/local/share/ca-certificates/sk.pfx -inkey /usr/local/share/certificates/signingKey.key -in /usr/local/share/certificates/signingKey.crt -password pass:$IdentityServer__Key__KeyProtectionOptions__X509CertificatePassword" }}
 {{- if .Values.ssl.ca.trust }}
 {{- $trustCert := "cp /usr/local/share/certificates/ca.key /usr/local/share/ca-certificates/ca.key; cp /usr/local/share/certificates/ca.crt /usr/local/share/ca-certificates/ca.crt; chmod -R 644 /usr/local/share/ca-certificates/; update-ca-certificates" }}
-{{- printf "%s; %s; %s; %s; %s" $cpSettings $protectTls $protectDP $protectSK $trustCert }}
+{{- printf "%s; %s; %s" $cpSettings $protectTls $trustCert }}
 {{- else }}
-{{- printf "%s; %s; %s; %s" $cpSettings $protectTls $protectDP $protectSK }}
+{{- printf "%s; %s" $cpSettings $protectTls }}
 {{- end }}
 {{- end }}
