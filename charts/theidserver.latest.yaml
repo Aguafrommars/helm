@@ -1,21 +1,26 @@
-# Default values for TheIdServer.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+image:
+  repository: "aguacongas/theidserver.duende"
+  pullPolicy: "Always"
+  tag: "next"
 
-ingress:
-  enabled: false
-serviceaccount:
-  enabled: false
-  
-# Dependencies configuration
-mysql:
-  enabled: false
 redis:
   enabled: false
+  image:
+    tag: "latest"    
+
 seq:
   enabled: false
+  image:
+    tag: "latest"
 
-connectionString: "not used"
+mysql:
+  image:
+    tag: "latest"
+  auth:
+    rootPassword: "Qxx1L5N9oS"
+    username: "theidserver"
+    database: "theidserver"
+    password: "The1dServer-2o22"
 
 # Kestrel servers cerificates
 ssl: 

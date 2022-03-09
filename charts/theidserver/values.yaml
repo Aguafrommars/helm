@@ -8,7 +8,7 @@ image:
   repository: aguacongas/theidserver
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 
+  tag: 4.4.0
 
 imagePullSecrets: []
 nameOverride: ""
@@ -87,7 +87,7 @@ mysql:
   enabled: true
   image:
     tag: 8.0.25
-  db: 
+  auth: 
     user: theidserver # The mysql user is required if connectionString is not defined 
     name: theidserver # The mysql name is required if connectionString is not defined
     password: # The mysql user is required if connectionString is not defined
@@ -219,22 +219,3 @@ ssl:
     validationPeriod: 3650
     crt: 
     key: 
-
-# Certificate to crypt data protection keys
-# This certificate can be generate
-dataProtection:
-  create: true
-  cn:
-  ipList: []
-  sanList: []
-  crt:
-  key:
-
-# Certificate to crypt signing keys
-signingKey:
-  create: true
-  cn:
-  ipList: []
-  sanList: []
-  crt:
-  key:
