@@ -52,5 +52,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PAT }}
       - name: Set version
         if: contains('.', steps.semantic.outputs.new_release_version)
-        run: yq w Chart.yaml version ${{ steps.semantic.outputs.new_release_version }} >> Chart.yaml
+        run: yq -i '.version = ${{ steps.semantic.outputs.new_release_version }}' Chart.yaml
       
