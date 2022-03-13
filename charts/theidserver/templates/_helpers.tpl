@@ -111,8 +111,12 @@ Create the connection string
 {{- $name := required "The MySql mysql.auth.name is required" .Values.mysql.auth.name }}
 {{- $user := required "The MySql mysql.auth.user is required" .Values.mysql.auth.user }}
 {{- $pwd := required "The MySql mysql.auth.password is required" .Values.mysql.auth.password }}
+{{- if eq .Values.mysql.architecture "replication" }}
+{{- printf "server=%s-primary;uid=%s;pwd=%s;database=%s" (include "theidserver.mysql.fullname" .) $user $pwd $name }}
+{{- else }}
 {{- printf "server=%s;uid=%s;pwd=%s;database=%s" (include "theidserver.mysql.fullname" .) $user $pwd $name }}
-{{- else}}
+{{- end }}
+{{- else }}
 {{- print .Values.connectionString }}
 {{- end }}
 {{- end }}
@@ -129,8 +133,13 @@ Create the seq url
 Create the redis connection string
 */}}
 {{- define "theidserver.redis" -}}
-{{ $port := default 6379 .Values.redis.service.port }}
-{{- printf "%s:%d" (include "redis.fullname" .) (int $port) }}
+{{ $port := default 6379 .Values.redis.master.service.ports.redis }}
+{{ $pass := ternary (printf ",password=%s" .Values.redis.auth.password) "" .Values.redis.auth.enabled }}
+{{- if eq .Values.redis.architecture "replication" -}}
+{{- printf "%s-headless:%d%s" (include "theidserver.redis.fullname" .) (int $port) ($pass) }}
+{{- else -}}
+{{- printf "%s:%d%s" (include "theidserver.redis.fullname" .) (int $port) ($pass) }}
+{{- end }}
 {{- end }}
 
 {{/*
@@ -139,10 +148,12 @@ Create the theidserver container init command
 {{- define "theidserver.init" -}}
 {{- $cpSettings := "cp /usr/local/share/config/appsettings.json /app/appsettings.json; cp /usr/local/share/config/admin-appsettings.json /app/wwwroot/appsettings.json" }}
 {{- $protectTls := "openssl pkcs12 -export -out /usr/local/share/ca-certificates/ssl.pfx -inkey /usr/local/share/certificates/ssl.key -in /usr/local/share/certificates/ssl.crt -password pass:$ASPNETCORE_Kestrel__Certificates__Default__Password" }}
+{{- $protectDP := "openssl pkcs12 -export -out /usr/local/share/ca-certificates/dp.pfx -inkey /usr/local/share/certificates/dataProtection.key -in /usr/local/share/certificates/dataProtection.crt -password pass:$DataProtectionOptions__KeyProtectionOptions__X509CertificatePassword" }}
+{{- $protectSK := "openssl pkcs12 -export -out /usr/local/share/ca-certificates/sk.pfx -inkey /usr/local/share/certificates/signingKey.key -in /usr/local/share/certificates/signingKey.crt -password pass:$IdentityServer__Key__KeyProtectionOptions__X509CertificatePassword" }}
 {{- if .Values.ssl.ca.trust }}
 {{- $trustCert := "cp /usr/local/share/certificates/ca.key /usr/local/share/ca-certificates/ca.key; cp /usr/local/share/certificates/ca.crt /usr/local/share/ca-certificates/ca.crt; chmod -R 644 /usr/local/share/ca-certificates/; update-ca-certificates" }}
-{{- printf "%s; %s; %s" $cpSettings $protectTls $trustCert }}
+{{- printf "%s; %s; %s; %s; %s" $cpSettings $protectTls $protectDP $protectSK $trustCert }}
 {{- else }}
-{{- printf "%s; %s" $cpSettings $protectTls }}
+{{- printf "%s; %s; %s; %s" $cpSettings $protectTls $protectDP $protectSK }}
 {{- end }}
 {{- end }}

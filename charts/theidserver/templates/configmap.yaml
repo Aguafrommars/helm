@@ -7,6 +7,7 @@ metadata:
 data:
   {{- if .Values.redis.enabled }}
   SignalR__RedisConnectionString: "{{ include "theidserver.redis" . }}"
+  RedisConfigurationOptions__ConnectionString: "{{ include "theidserver.redis" . }}"
   {{- end }}
   {{- if .Values.seq.enabled }}
   Serilog__WriteTo__0__Args__serverUrl: "{{ include "theidserver.seqUrl" . }}"
