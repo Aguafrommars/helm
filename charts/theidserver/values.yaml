@@ -2,11 +2,11 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 2
+replicaCount: 3
 
 image:
-  repository: aguacongas/theidserver
-  pullPolicy: IfNotPresent
+  repository: "aguacongas/theidserver.duende"
+  pullPolicy: "IfNotPresent"
   # Overrides the image tag whose default is the chart appVersion.
   tag: 
 
@@ -81,19 +81,17 @@ affinity: {}
 # Dependencies configuration
 seq:
   enabled: true
-  image:
-    tag: 2021.2.5647
 mysql:
   enabled: true
-  image:
-    tag: 8.0.25
-  auth: 
+  auth:   
     user: theidserver # The mysql user is required if connectionString is not defined 
     name: theidserver # The mysql name is required if connectionString is not defined
     password: # The mysql user is required if connectionString is not defined
 redis:
   enabled: true
-
+  auth:
+    password: #the redis password
+    
 # override the generated connection string
 connectionString: 
 
@@ -120,8 +118,14 @@ appSettings:
       Key:
         Type: KeysRotation
         StorageKind: EntityFramework
+        KeyProtectionOptions: 
+          KeyProtectionKind: "X509"
+          X509CertificatePath: "/usr/local/share/ca-certificates/sk.pfx"
     DataProtectionOptions:
       StorageKind: EntityFramework
+      KeyProtectionOptions: 
+        KeyProtectionKind: "X509"
+        X509CertificatePath: "/usr/local/share/ca-certificates/dp.pfx"
     TokenCleanupInterval: '00:05:00'
     Migrate: true
     DbType: MySql
@@ -150,6 +154,22 @@ appSettings:
       ClientSecret: 84137599-13d6-469c-9376-9e372dd2c1bd
       Scope: theidserveradminapi
       HttpClientName: email
+    BackchannelAuthenticationUserNotificationServiceOptions:
+      Authority: https://localhost:{{ .Values.service.ports.https }}
+      ApiUrl: https://localhost:{{ .Values.service.ports.https }}/api/email
+      ClientId: public-server
+      ClientSecret: 84137599-13d6-469c-9376-9e372dd2c1bd
+      Scope: theidserveradminapi
+      HttpClientName: ciba
+    DynamicConfigurationOptions:
+      ProviderType: "Aguacongas.DynamicConfiguration.Redis.RedisConfigurationProvider, Aguacongas.DynamicConfiguration.Redis"
+    DynamicClientRegistrationOptions:
+      AllowedContacts:
+        Contact: "certification@oidf.org"
+        AllowedHosts: [ "www.certification.openid.net" ]
+    RedisConfigurationOptions:
+      HashKey: "Aguacongas.TheIdServer.Duende"
+      Channel: "Aguacongas.TheIdServer.Duende.Channel"   
     SignalR:
       HubOptions:
         EnableDetailedErrors: true
@@ -179,9 +199,107 @@ appSettings:
       - FromLogContext
       - WithMachineName
       - WithThreadId
-
+    InitialData:
+      Clients:
+      - ClientId: "theidserveradmin"
+        ClientName: "TheIdServer admin SPA Client"
+        ClientUri: "https://localhost:{{ .Values.service.ports.https }}"
+        ClientClaimsPrefix: null
+        AllowedGrantTypes: [ "authorization_code" ]
+        RequirePkce: true
+        RequireClientSecret: false
+        BackChannelLogoutSessionRequired: false
+        FrontChannelLogoutSessionRequired: false
+        RedirectUris: [ "https://localhost:{{ .Values.service.ports.https }}/authentication/login-callback" ]
+        PostLogoutRedirectUris: [ "https://localhost:{{ .Values.service.ports.https }}/authentication/logout-callback" ]
+        AllowedCorsOrigins: [ "https://localhost:{{ .Values.service.ports.https }}" ]
+        AllowedScopes: [ "openid", "profile", "theidserveradminapi" ]
+        AccessTokenType: "Reference"
+      - ClientId: "public-server"
+        ClientName: "Public server Credentials Client"
+        ClientClaimsPrefix: null
+        AllowedGrantTypes: [ "client_credentials" ]
+        ClientSecrets:
+        - Type: "SharedSecret"
+          Value: ""
+        Claims:
+        - Type: "role"
+          Value: "Is4-Writer"
+        - Type: "role"
+          Value: "Is4-Reader"        
+        BackChannelLogoutSessionRequired: false
+        FrontChannelLogoutSessionRequired: false
+        AllowedScopes: [ "openid", "profile", "theidserveradminapi" ]
+        AccessTokenType: "Reference"
+      - ClientId: "theidserver-swagger"
+        ClientName: "TheIdServer Swagger UI"
+        ClientClaimsPrefix: null
+        AllowedGrantTypes: [ "implicit" ]
+        AllowAccessTokensViaBrowser: true
+        RequireClientSecret: false
+        BackChannelLogoutSessionRequired: false
+        FrontChannelLogoutSessionRequired: false
+        AllowedScopes: [ "theidserveradminapi", "theidservertokenapi" ]
+        AllowedCorsOrigins: [ "https://localhost:{{ .Values.service.ports.https }}" ]
+        RedirectUris: [ "https://localhost:{{ .Values.service.ports.https }}/api/swagger/oauth2-redirect.html" ]
+      ApiScopes:
+      - Name: "theidserveradminapi"
+        DisplayName: "TheIdServer admin API scope"
+        UserClaims: [ "name", "role" ]
+      - Name: theidservertokenapi
+        DisplayName: "TheIdServer token API scope"
+        UserClaims: [ "name", "role" ]
+      Apis:
+      - Name: "theidserveradminapi"
+        DisplayName: "TheIdServer admin API"
+        UserClaims: [ "name", "role" ]
+        ApiSecrets:
+        - Type: "SharedSecret"
+        Scopes: [ "theidserveradminapi", "theidservertokenapi" ]
+      Users:
+      - UserName: "alice"
+        Email: "alice@theidserver.com"
+        EmailConfirmed: true
+        PhoneNumber: "+41766403736"
+        PhoneNumberConfirmed: true
+        Password: "Pass123$"
+        Roles: 
+        - "Is4-Writer"
+        - "Is4-Reader"
+        Claims:
+        - ClaimType: "name"
+          ClaimValue: "Alice Smith"
+        - ClaimType: "given_name"
+          ClaimValue: "Alice"
+        - ClaimType: "family_name"
+          ClaimValue: "Smith"
+        - ClaimType: "middle_name"
+          ClaimValue: "Alice Smith"
+        - ClaimType: "nickname"
+          ClaimValue: "Alice"
+        - ClaimType: "address"
+          ClaimValue: "{ \"street_address\": \"One Hacker Way\", \"locality\": \"Heidelberg\", \"postal_code\": \"69118\", \"country\": \"Germany\" }"
+        - ClaimType: "birthdate"
+          ClaimValue: "1970-01-01"
+        - ClaimType: "zoneinfo"
+          ClaimValue: "ch"
+        - ClaimType: "gender"
+          ClaimValue: "female"
+        - ClaimType: "profile"
+          ClaimValue: "http://alice.com/profile"
+        - ClaimType: "locale"
+          ClaimValue: "fr"
+        - ClaimType: "picture"
+          ClaimValue: "http://alice.com/picture"
 ## admin ui configuration
 adminSettings: 
+  prerendered: true
+  settingsOptions:
+    typeName: "Aguacongas.TheIdServer.BlazorApp.Models.ServerConfig, Aguacongas.TheIdServer.BlazorApp.Infrastructure"
+    apiUrl:  "https://localhost:{{ .Values.service.ports.https }}/api/api/configuration"
+  menuOptions:
+    showSettings: true
+  welcomeContenUrl: "https://localhost:5443/api/welcomefragment"
   administratorEmail: aguacongas@gmail.com
   apiBaseUrl: https://localhost:{{ .Values.service.ports.https }}/api
   loggingOptions:
@@ -195,13 +313,10 @@ adminSettings:
     authority: https://localhost:{{ .Values.service.ports.https }}/
     clientId: theidserveradmin
     defaultScopes:
-    - openid
-    - profile
     - theidserveradminapi
     postLogoutRedirectUri: https://localhost:{{ .Values.service.ports.https }}/authentication/logout-callback
     redirectUri: https://localhost:{{ .Values.service.ports.https }}/authentication/login-callback
     responseType: code
-  welcomeContenUrl: "/api/welcomefragment"
 
 # Kestrel servers cerificates
 ssl: 
@@ -219,3 +334,22 @@ ssl:
     validationPeriod: 3650
     crt: 
     key: 
+
+# Certificate to crypt data protection keys
+# This certificate can be generate
+dataProtection:
+  create: true
+  cn:
+  ipList: []
+  sanList: []
+  crt:
+  key:
+
+# Certificate to crypt signing keys
+signingKey:
+  create: true
+  cn:
+  ipList: []
+  sanList: []
+  crt:
+  key:

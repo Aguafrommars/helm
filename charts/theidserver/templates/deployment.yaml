@@ -52,6 +52,16 @@ spec:
               secretKeyRef:
                 name: {{ include "theidserver.fullname" . }}-opaque
                 key: ssl.pwd
+          - name: IdentityServer__Key__KeyProtectionOptions__X509CertificatePassword
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "theidserver.fullname" . }}-opaque
+                key: dataProtection.pwd
+          - name: DataProtectionOptions__KeyProtectionOptions__X509CertificatePassword
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "theidserver.fullname" . }}-opaque
+                key: signingKey.pwd
           volumeMounts:
           - name: certificates-secret
             mountPath: /usr/local/share/certificates
@@ -69,17 +79,17 @@ spec:
           livenessProbe:
             httpGet:
               scheme: HTTPS
-              path: /.well-known/openid-configuration
+              path: /healthz
               port: https
           readinessProbe:
             httpGet:
               scheme: HTTPS
-              path: /.well-known/openid-configuration
+              path: /healthz
               port: https
           startupProbe:
             httpGet:
               scheme: HTTPS
-              path: /.well-known/openid-configuration
+              path: /healthz
               port: https
             failureThreshold: 30
             periodSeconds: 10

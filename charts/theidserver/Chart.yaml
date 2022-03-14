@@ -15,12 +15,12 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 4.4.0
+version: 4.5.0
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
-appVersion: 3.0.0
+appVersion: 4.5.0
 
 # The list of keywords about this project
 keywords:
@@ -30,6 +30,7 @@ keywords:
   - identityserver4
   - admin-ui
   - iam
+  - sso
 
 # The URL of this projects home page
 home: https://github.com/Aguafrommars/TheIdServer
@@ -50,7 +51,7 @@ icon: https://raw.githubusercontent.com/Aguafrommars/TheIdServer/master/package-
 dependencies:
   - name: mysql
     repository: https://charts.bitnami.com/bitnami
-    version: 8.5.9
+    version: 8.8.26
     condition: mysql.enabled, global.mysql.enabled
     tags:
       - back-end
@@ -60,8 +61,15 @@ dependencies:
         parent: mysql.service
   - name: seq
     repository: https://helm.datalust.co
-    version: 2021.2.5647
+    version: 2021.4.7192
     condition: seq.enabled, global.seq.enabled
     tags:
       - back-end
       - seq
+  - name: redis
+    repository: https://charts.bitnami.com/bitnami
+    version: 16.5.2
+    condition: redis.enabled, global.redis.enabled
+    tags:
+      - back-end
+      - redis
