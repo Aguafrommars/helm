@@ -43,15 +43,14 @@ service:
     
 ingress:
   enabled: false
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
+  annotations:
+    # this sample use https://github.com/kubernetes/ingress-nginx
+    # SSL Passthrough must be enable (https://github.com/kubernetes/ingress-nginx/blob/main/docs/user-guide/nginx-configuration/annotations.md#ssl-passthrough) 
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
   hosts:
     - host: theidserver.private.local
-  tls: []
-  #  - secretName: theidserver-private-tls
-  #    hosts:
-  #      - theidserver.private.local
+  # tls node is not mapped because the proxied server has its certificate.
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -321,6 +320,10 @@ adminSettings:
 # Kestrel servers cerificates
 ssl: 
   create: true
+  issuer:
+    enabled: false
+    ref:
+    kind:
   cn: 
   ipList:
   sanList:

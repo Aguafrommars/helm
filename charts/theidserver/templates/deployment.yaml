@@ -27,6 +27,14 @@ spec:
       serviceAccountName: {{ include "theidserver.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- if .Values.ingress.enabled }}
+      hostAliases:
+      - ip: "127.0.0.1"
+        hostnames:
+        {{- range $host := .Values.ingress.hosts }}
+        - {{ $host.host | quote }}
+        {{- end }}
+      {{- end }}      
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
