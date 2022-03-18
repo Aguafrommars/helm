@@ -111,10 +111,11 @@ Create the connection string
 {{- $name := required "The MySql mysql.auth.name is required" .Values.mysql.auth.name }}
 {{- $user := required "The MySql mysql.auth.user is required" .Values.mysql.auth.user }}
 {{- $pwd := required "The MySql mysql.auth.password is required" .Values.mysql.auth.password }}
+{{- $host := (include "theidserver.mysql.fullname" .)}}
 {{- if eq .Values.mysql.architecture "replication" }}
-{{- printf "server=%s-primary;uid=%s;pwd=%s;database=%s" (include "theidserver.mysql.fullname" .) $user $pwd $name }}
+{{- printf "server=%s-primary;uid=%s;pwd=%s;database=%s" $host $user $pwd $name }}
 {{- else }}
-{{- printf "server=%s;uid=%s;pwd=%s;database=%s" (include "theidserver.mysql.fullname" .) $user $pwd $name }}
+{{- printf "server=%s;uid=%s;pwd=%s;database=%s" $host $user $pwd $name }}
 {{- end }}
 {{- else }}
 {{- print .Values.connectionString }}
@@ -147,7 +148,7 @@ Create the theidserver container init command
 */}}
 {{- define "theidserver.init" -}}
 {{- $cpSettings := "cp /usr/local/share/config/appsettings.json /app/appsettings.json; cp /usr/local/share/config/admin-appsettings.json /app/wwwroot/appsettings.json" }}
-{{- $protectTls := "openssl pkcs12 -export -out /usr/local/share/ca-certificates/ssl.pfx -inkey /usr/local/share/certificates/ssl.key -in /usr/local/share/certificates/ssl.crt -password pass:$ASPNETCORE_Kestrel__Certificates__Default__Password" }}
+{{- $protectTls := "openssl pkcs12 -export -out /usr/local/share/ca-certificates/ssl.pfx -inkey /usr/local/share/certificates/tls.key -in /usr/local/share/certificates/tls.crt -password pass:$ASPNETCORE_Kestrel__Certificates__Default__Password" }}
 {{- $protectDP := "openssl pkcs12 -export -out /usr/local/share/ca-certificates/dp.pfx -inkey /usr/local/share/certificates/dataProtection.key -in /usr/local/share/certificates/dataProtection.crt -password pass:$DataProtectionOptions__KeyProtectionOptions__X509CertificatePassword" }}
 {{- $protectSK := "openssl pkcs12 -export -out /usr/local/share/ca-certificates/sk.pfx -inkey /usr/local/share/certificates/signingKey.key -in /usr/local/share/certificates/signingKey.crt -password pass:$IdentityServer__Key__KeyProtectionOptions__X509CertificatePassword" }}
 {{- if .Values.ssl.ca.trust }}

@@ -67,8 +67,8 @@ Data
 ====
 signingKey.crt:      1103 bytes
 signingKey.key:      1679 bytes
-ssl.crt:             1326 bytes
-ssl.key:             1675 bytes
+tls.crt:             1326 bytes
+tls.key:             1675 bytes
 ca.crt:              1135 bytes
 ca.key:              1679 bytes
 dataProtection.crt:  1103 bytes
@@ -84,7 +84,7 @@ kubectl get secret <secret name> -o jsonpath="{.data['<secret key>']}"
 ex:
 
 ```bash
-❯ kubectl get secret theidserver-certs -o jsonpath="{.data['ssl\.key']}" --namespace theidserver
+❯ kubectl get secret theidserver-certs -o jsonpath="{.data['tls\.key']}" --namespace theidserver
 LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFb3dJQkFBS0NBUUVBeW5mNVBMR21jVGJOMkpDRXM0eUpHS1JlUzhQVnVsaUtYZXVpK3VQSTUzdzJ5QW52Ckt3ZWpreXVKYzhDR3VQeDFLZEpQMWVrQmowY2NZUEtaRmVHcm9HNFNaT3ZoZW1PeVJma1A1VVNwNmNreEVXY28KU1FLemMzZWNaT0pFbUR1TjFtcytub2JuSk5ZcXJkT20yK00wM1ova3dnMmlIVHFZQ0diU3o3ajVvajlwOUo5MApia05vT0pLTnIwT3I1OFdkNDd3SFFSWEgvOU9GV25LTE5ORnhvV1BzdXlDeWlEeE0xMnRzOFVRVkZaN1dUYXk0CkMwTU5qYXVTYzlJN2FBREJhREdhVUFnZzJnbkZmb2EzNG1RbUdyUTk0eHA1VERvWUI4NHdOTHA5Y1NEUVRhVWsKQ2RtVWpIMW5jTjNtU2xnR3hiYkhnN21Dcjk1cm1EYTRuQUJYeVFJREFRQUJBb0lCQVFDTmpXRmdNS2U0UVdPYgpCRGJ5dk05Z3ZoSDdFSGlOcHJkZVFJOGFyMFJYcXYwMXo5UTVsa2FqYnUzVFVvZ2VMc3JQS1cyTmxURDA5ZmQrClJENEpFVlNIZmswMzU3NGxiaXhHUllINmZZMzVtQ0xKRXdFVVFtSXAyVGNyUlJKR0NHVDZ3dEh0elUwdThOaTMKM09Dc25PWHFDSTdMcVBKdFV2alY3dVYyT3RHMHZ6Z2ZVTDRuMlBJMFZTYVplUmE3aW9DbGtwNjQzWHhZamZxUgpxUnBqV2FiNzlJU0FnK0ZTRGJPS0tTQjFHdDRDcmZHbENYSXhIcjRJN0x4UGIwZnQ4L2ZyM3I5YzRXbWF5TWcyCmhsVVY3RW1tV1lCTkEzblYzcDNrZEcyZi9jREJZQzkrc1I3cTlLMEk3N21oZFlCSFZYUlFrVjRaYy9xRTN5YXUKejZ6TWNhMHRBb0dCQU5XNWZPa2M5YUNnYndXR0xIVGdjR2Z1TFNRQkljVGhjejZEMlZqdnZiY0tPV0NQMld5SgowN0VhOW1VVGFMWElnQ3d5QWlvM3ZzNXZCZ2xwQ1FXdGFNWWk3NEk4WVQ1ZVJRRXdTUDlHWThWRnJjUFVMdGEvCkp0cCtSNzc3T0NmSDhlcTJRbkZPK2tzdDBoTnZMTkdKUEN6SGUvcmsvcmo3ZitnWldOSDBjYnI3QW9HQkFQS0UKZ3kyRm5jRXNURmpGbjV2THYrY212RGNMUU9idVZlT3dseXhzVDJkbU5WVjRYT2NEQUUyYkFpajFWU0MvM1VsdApYM285YkNBdzJkdXY0OXZhRXBJdWlBTFFYeitjSHpmUnZuZ2RhUUJBK0IweU5ISyt1MDl4bkRMS2VQak5CUlBOCnhKYVBFaUZVR0JHVnZadnFUZ0tDNTdndTNMeGtIejhseFhLdmxyMExBb0dBUWtESjlBbkNLeFVRMVltT1puemMKMjVyOTYxZGVmSVhYRDk0WGxuWmJQVTZ5RXJrRkVaeDRQMEs0ZHdUWlJPRHV1c1NWM3ppQXNjWEEvVkhPTmpCWApkblNHQXIxczk4U0paNkRzUUJZMS80Vm1KSHEyT21QdlMzUXlFWVlYRmwzcEpIVnppMlNNT3BudHNaQ1pPQ3R1CnVBTHU4QXZrMnJzOEgxc2NLWm01VjlrQ2dZQk04NFVZSGF5WHpmR1B2VzFPcHhFR1RJRXVTaERXOWNzbEN6UjgKc1FWay9zWnZqMWlUS0oyaEFrMW1KNnBTVU83clRKd2VFbjFMblpTVEk3VitYaXpFVzZWbWx5MlI1bnoxWGtVOApvY0JlaHo3ekxLbjl1czErZ01NYVRxcWg3NVByMjcvRU1qT0RoY1o1VmZVckV1YWIzMk9kU3FsWjBiOGtiMXkrCmJqNjdUd0tCZ0NIaDhFOVh1eDF1K3lGdzZScUUvZFVZV2NOZExQb1BsaHI4M1dSeHRpQnYwV0lzN2hRTmFkb3YKT2NsZW0ya1Rsams4MFVabGZlQ09WeTM0YjdLdjdKUVQ4b1RIeFp2dVhSOXhjTldRMHVvWEVvcitjVU0xaVhlaQpZZUsrMDNtTzBJT3FReUdpdnFJNHV1Z3lkQjFaeU5YS0xhdE1iWG9JUDZmMlJsVzdXV2RyCi0tLS0tRU5EIFJTQSBQUklWQVRFIEtFWS0tLS0tCg==
 ```
 
@@ -115,7 +115,7 @@ The following table lists the configurable parameters of the TheIdServer chart a
 
 |Parameter|Description|Default|Remarks|
 |-|-|-|-|
-|`ssl.create`|If true, creates Kestrel servers certificate.|true|If false, `ssl.crt` and `ssl.key` must be defined.|
+|`ssl.create`|If true, creates Kestrel servers certificate.|true|If false, `ssl.issuer` must be enabled or `ssl.crt` and `ssl.key` must be defined.|
 |`ssl.cn`|The common name used to create the Kestrel servers certificate.|`<Deployment name>`||
 |`ssl.ipList`|The IP list used to create the Kestrel servers certificate.|["127.0.0.1"]||
 |`ssl.altNames`|The alternative name list used to create the Kestrel servers certificate.|["`<ssl.cn>`", "`<ssl.cn>`:`<service.port.https>`", "localhost", "localhost:`<service.port.https>`"]|if `ingress.enabled=true` and `ssl.altNames` is not defined, the chart add `"<ingress.hosts.host>"` and `"<ingress.hosts.host>:<service.port.https>"` to the alternative name list.|
@@ -128,6 +128,11 @@ The following table lists the configurable parameters of the TheIdServer chart a
 |`ssl.ca.validationPeriod`|The validation period in day to create the certification authority certificate.|3650||
 |`ssl.ca.crt`|The certification authority certificate.|nil|This value is copied in `<deployement name>`-certs secret `ca.crt`.|
 |`ssl.ca.key`|The certification authority certificate key.|nil|This value is copied in `<deployement name>`-certs secret `ca.key`.|
+|`ssl.issuer.enabled`|Enable the certificate issuer.|false||
+|`ssl.issuer.ref`|The name of the cerificate issuer to use.|nil||
+|`ssl.issuer.kind`|The kind of the cerificate issuer.|nil|Can be `Issuer` or `ClusterIssuer`|
+|`ssl.issuer.duration`|The certicate lifetime.|2160h (90d)|Must be specified using a Go time.Duration string format, which does not allow the d (days) suffix. You must specify these values using s, m, and h suffixes instead|
+|`ssl.issuer.renewBefore`|Duration to renew the certificate before its expiration.|360h (15d)|Must be specified using a Go time.Duration string format, which does not allow the d (days) suffix. You must specify these values using s, m, and h suffixes instead|
 |`dataProtection.create`|If true, creates the certificate to crypt data protection keys at rest.|true|If false, `dataProtection.crt` and `dataProtection.key` must be defined.|
 |`dataProtection.cn`|The common name used to create the certificate to crypt data protection keys at rest.|`Deployment name`||
 |`dataProtection.ipList`|The IP list used to create thethe certificate to crypt data protection keys at rest.|nil||
@@ -253,6 +258,52 @@ NOTES:
   echo "Visit https://127.0.0.1:8080 to use your application"
   kubectl --namespace theidserver port-forward $POD_NAME 8080:5443
   ```
+
+## Use a certificate issuer 
+
+The ssl certificate can be generate by a certificate issuer using the [cert-manager](https://cert-manager.io/docs/concepts/issuer/) extension.
+
+### Prerequisites
+
+- a [cert-amanger](https://cert-manager.io/docs/installation/)
+- a certificate issuer.
+``` json
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: aguacongas@gmail.com
+    privateKeySecretRef:
+      name: letsencrypt
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
+          podTemplate:
+            spec:
+              nodeSelector:
+                "kubernetes.io/os": linux
+```
+
+This sample set up a [cluster issuer](https://cert-manager.io/docs/concepts/issuer/) for [Let's Encrypt](https://letsencrypt.org/).
+
+### Configure the ssl issuer
+
+``` json
+ssl: 
+  create: false
+  issuer:
+    enabled: true
+    ref: letsencrypt
+    kind: ClusterIssuer
+```
+
+This sample show how to use the `letsencrypt ClusterIssuer` to generate the ssl certificate.
+
+> dataProtection and sigininKey cannot be generated by `cert-manager`. They are used to crypt keys in the store a should never be regenerated or you loose generated keys.  
 
 ## Configuration
 
