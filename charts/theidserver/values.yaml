@@ -97,7 +97,7 @@ connectionString:
 # appSettings.json ovverride
 appSettings:
   # by env vars
-  env: []
+  env: {}
   # by appsetting.json file
   file:
     SiteOptions:
@@ -322,10 +322,12 @@ ssl:
   create: true
   issuer:
     enabled: false
+    duration: 2160h # 90d
+    renewBefore: 360h # 15d
     ref:
     kind:
   cn: 
-  ipList:
+  ipList: []
   sanList:
   validationPeriod: 365
   crt:
