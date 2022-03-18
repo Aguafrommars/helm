@@ -2,8 +2,60 @@ apiVersion: v1
 entries:
   theidserver:
   - apiVersion: v2
+    appVersion: 4.5.1
+    created: "2022-03-18T22:07:23.890998593Z"
+    dependencies:
+    - condition: mysql.enabled, global.mysql.enabled
+      import-values:
+      - child: service
+        parent: mysql.service
+      name: mysql
+      repository: https://charts.bitnami.com/bitnami
+      tags:
+      - back-end
+      - mysql
+      version: 8.8.26
+    - condition: seq.enabled, global.seq.enabled
+      name: seq
+      repository: https://helm.datalust.co
+      tags:
+      - back-end
+      - seq
+      version: 2021.4.7192
+    - condition: redis.enabled, global.redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      tags:
+      - back-end
+      - redis
+      version: 16.5.2
+    description: TheIdServer cluster Helm chart for Kubernetes
+    digest: 7baba9c525c411bad612ce2152b58cd4ad7407069f77e7f24b64a49b6a355892
+    home: https://github.com/Aguafrommars/TheIdServer
+    icon: https://raw.githubusercontent.com/Aguafrommars/TheIdServer/master/package-icon.png
+    keywords:
+    - oidc
+    - openid-connect
+    - oauth
+    - identityserver
+    - admin-ui
+    - iam
+    - sso
+    maintainers:
+    - email: aguacongas@gmail.com
+      name: Olivier Lefebvre
+      url: https://github.com/aguacongas
+    name: theidserver
+    sources:
+    - https://github.com/Aguafrommars/TheIdServer
+    - https://github.com/Aguafrommars/helm/tree/main/charts/theidserver
+    type: application
+    urls:
+    - theidserver-4.6.0.tgz
+    version: 4.6.0
+  - apiVersion: v2
     appVersion: 4.5.0
-    created: "2022-03-14T09:08:49.185591853Z"
+    created: "2022-03-18T22:07:23.874373089Z"
     dependencies:
     - condition: mysql.enabled, global.mysql.enabled
       import-values:
@@ -55,7 +107,7 @@ entries:
     version: 4.5.0
   - apiVersion: v2
     appVersion: 3.0.0
-    created: "2022-03-14T09:08:49.170219349Z"
+    created: "2022-03-18T22:07:23.858273287Z"
     dependencies:
     - condition: mysql.enabled, global.mysql.enabled
       import-values:
@@ -99,7 +151,7 @@ entries:
     version: 4.4.0
   - apiVersion: v2
     appVersion: 3.0.0
-    created: "2022-03-14T09:08:49.165434517Z"
+    created: "2022-03-18T22:07:23.853111855Z"
     dependencies:
     - condition: mysql.enabled, global.mysql.enabled
       import-values:
@@ -143,7 +195,7 @@ entries:
     version: 0.1.3
   - apiVersion: v2
     appVersion: 2.3.0
-    created: "2022-03-14T09:08:49.158928273Z"
+    created: "2022-03-18T22:07:23.846498813Z"
     dependencies:
     - condition: mysql.enabled, global.mysql.enabled
       import-values:
@@ -191,7 +243,7 @@ entries:
     version: 0.1.2
   - apiVersion: v2
     appVersion: 1.1.1
-    created: "2022-03-14T09:08:49.15256353Z"
+    created: "2022-03-18T22:07:23.840050272Z"
     dependencies:
     - condition: mysql.enabled, global.mysql.enabled
       import-values:
@@ -238,7 +290,7 @@ entries:
     version: 0.1.1
   - apiVersion: v2
     appVersion: 1.1.1
-    created: "2022-03-14T09:08:49.148346401Z"
+    created: "2022-03-18T22:07:23.83499124Z"
     dependencies:
     - condition: mysql.enabled, global.mysql.enabled
       import-values:
@@ -267,4 +319,4 @@ entries:
     urls:
     - theidserver-0.1.0.tgz
     version: 0.1.0
-generated: "2022-03-14T09:08:49.142963865Z"
+generated: "2022-03-18T22:07:23.829132004Z"
