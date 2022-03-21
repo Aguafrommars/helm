@@ -321,6 +321,7 @@ The following table lists configurable parameters of the TheIdServer chart and t
 |`serviceAccount.create`|Specifies whether a ServiceAccount should be created|`true`||
 |`serviceAccount.annotations`|Annotations to add to the service account|`{}`||
 |`serviceAccount.name`|The name of the service account to use|`nil`|If not set and create is true, a name is generated using the fullname template|
+|`deploymentAnnotations`|Annotations to add to deployment|`{}`||
 |`podAnnotations`|Annotations to add to pods|`{}`||
 |`podSecurityContext`|Pods security context|`{}`||
 |`securityContext`|Containers security context|`ClusterIP`||

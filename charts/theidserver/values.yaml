@@ -23,6 +23,9 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
+deploymentAnnotations: {}
+  # wave.pusher.com/update-on-config-change: "true"
+
 podAnnotations: {}
 
 podSecurityContext: {}
