@@ -81,6 +81,10 @@ spec:
             mountPath: /usr/local/share/ca-certificates
           - name: config
             mountPath: /usr/local/share/config
+          {{- range .Values.volumes }}
+          - name: {{ .name }}
+            mountPath: {{ .mountPath }}
+           {{- end }}
           lifecycle:
             postStart:
               exec:
@@ -121,6 +125,10 @@ spec:
             path: admin-appsettings.json
           - key: appsettings.json
             path: appsettings.json
+      {{- range .Values.volumes }}
+      - name: {{ .name }}
+        {{- toYaml .spec | nindent 8 }}
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
