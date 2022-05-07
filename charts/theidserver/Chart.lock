@@ -1,12 +1,12 @@
 dependencies:
 - name: mysql
   repository: https://charts.bitnami.com/bitnami
-  version: 8.8.26
+  version: 8.8.33
 - name: seq
   repository: https://helm.datalust.co
   version: 2021.4.7192
 - name: redis
   repository: https://charts.bitnami.com/bitnami
-  version: 16.5.2
-digest: sha256:4f23e2a9a9d47494ddc1bf442756b243476040c7e467954b2818fa489af29e43
-generated: "2022-03-13T16:05:28.1817186+01:00"
+  version: 16.5.5
+digest: sha256:9a96ffebec337ebef3fb8f47da985bd2e24d352598d88e221aa273bef2011b31
+generated: "2022-04-05T16:20:58.598586+02:00"
