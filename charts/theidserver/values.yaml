@@ -322,6 +322,8 @@ adminSettings:
     authority: https://localhost:{{ .Values.service.ports.https }}/
     clientId: theidserveradmin
     defaultScopes:
+    - openid
+    - profile
     - theidserveradminapi
     postLogoutRedirectUri: https://localhost:{{ .Values.service.ports.https }}/authentication/logout-callback
     redirectUri: https://localhost:{{ .Values.service.ports.https }}/authentication/login-callback
