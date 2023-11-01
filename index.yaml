@@ -2,8 +2,60 @@ apiVersion: v1
 entries:
   theidserver:
   - apiVersion: v2
+    appVersion: 7.4.6
+    created: "2023-11-01T16:18:07.403709414Z"
+    dependencies:
+    - condition: mysql.enabled, global.mysql.enabled
+      import-values:
+      - child: service
+        parent: mysql.service
+      name: mysql
+      repository: https://charts.bitnami.com/bitnami
+      tags:
+      - back-end
+      - mysql
+      version: 9.14.1
+    - condition: seq.enabled, global.seq.enabled
+      name: seq
+      repository: https://helm.datalust.co
+      tags:
+      - back-end
+      - seq
+      version: 2021.4.7192
+    - condition: redis.enabled, global.redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      tags:
+      - back-end
+      - redis
+      version: 18.2.0
+    description: TheIdServer cluster Helm chart for Kubernetes
+    digest: b2c1b1a161ef4ca2c329d975e128bb69a40a90cfb5a1c724a5ac0e3ad6556467
+    home: https://github.com/Aguafrommars/TheIdServer
+    icon: https://raw.githubusercontent.com/Aguafrommars/TheIdServer/master/package-icon.png
+    keywords:
+    - oidc
+    - openid-connect
+    - oauth
+    - identityserver
+    - admin-ui
+    - iam
+    - sso
+    maintainers:
+    - email: aguacongas@gmail.com
+      name: Olivier Lefebvre
+      url: https://github.com/aguacongas
+    name: theidserver
+    sources:
+    - https://github.com/Aguafrommars/TheIdServer
+    - https://github.com/Aguafrommars/helm/tree/main/charts/theidserver
+    type: application
+    urls:
+    - theidserver-4.8.1.tgz
+    version: 4.8.1
+  - apiVersion: v2
     appVersion: 4.5.2
-    created: "2022-03-23T13:29:10.518470105Z"
+    created: "2023-11-01T16:18:07.388788218Z"
     dependencies:
     - condition: mysql.enabled, global.mysql.enabled
       import-values:
@@ -55,7 +107,7 @@ entries:
     version: 4.8.0
   - apiVersion: v2
     appVersion: 4.5.2
-    created: "2022-03-23T13:29:10.497896438Z"
+    created: "2023-11-01T16:18:07.374980516Z"
     dependencies:
     - condition: mysql.enabled, global.mysql.enabled
       import-values:
@@ -107,7 +159,7 @@ entries:
     version: 4.7.0
   - apiVersion: v2
     appVersion: 4.5.1
-    created: "2022-03-23T13:29:10.477122368Z"
+    created: "2023-11-01T16:18:07.362122522Z"
     dependencies:
     - condition: mysql.enabled, global.mysql.enabled
       import-values:
@@ -159,7 +211,7 @@ entries:
     version: 4.6.0
   - apiVersion: v2
     appVersion: 4.5.0
-    created: "2022-03-23T13:29:10.456518Z"
+    created: "2023-11-01T16:18:07.349077135Z"
     dependencies:
     - condition: mysql.enabled, global.mysql.enabled
       import-values:
@@ -211,7 +263,7 @@ entries:
     version: 4.5.0
   - apiVersion: v2
     appVersion: 3.0.0
-    created: "2022-03-23T13:29:10.435942533Z"
+    created: "2023-11-01T16:18:07.336248195Z"
     dependencies:
     - condition: mysql.enabled, global.mysql.enabled
       import-values:
@@ -255,7 +307,7 @@ entries:
     version: 4.4.0
   - apiVersion: v2
     appVersion: 3.0.0
-    created: "2022-03-23T13:29:10.427847027Z"
+    created: "2023-11-01T16:18:07.331798454Z"
     dependencies:
     - condition: mysql.enabled, global.mysql.enabled
       import-values:
@@ -299,7 +351,7 @@ entries:
     version: 0.1.3
   - apiVersion: v2
     appVersion: 2.3.0
-    created: "2022-03-23T13:29:10.419626021Z"
+    created: "2023-11-01T16:18:07.327440619Z"
     dependencies:
     - condition: mysql.enabled, global.mysql.enabled
       import-values:
@@ -347,7 +399,7 @@ entries:
     version: 0.1.2
   - apiVersion: v2
     appVersion: 1.1.1
-    created: "2022-03-23T13:29:10.412063522Z"
+    created: "2023-11-01T16:18:07.323146623Z"
     dependencies:
     - condition: mysql.enabled, global.mysql.enabled
       import-values:
@@ -394,7 +446,7 @@ entries:
     version: 0.1.1
   - apiVersion: v2
     appVersion: 1.1.1
-    created: "2022-03-23T13:29:10.405241134Z"
+    created: "2023-11-01T16:18:07.318829127Z"
     dependencies:
     - condition: mysql.enabled, global.mysql.enabled
       import-values:
@@ -423,4 +475,4 @@ entries:
     urls:
     - theidserver-0.1.0.tgz
     version: 0.1.0
-generated: "2022-03-23T13:29:10.398891651Z"
+generated: "2023-11-01T16:18:07.315232746Z"
