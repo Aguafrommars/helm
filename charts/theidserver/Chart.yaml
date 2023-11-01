@@ -51,7 +51,7 @@ icon: https://raw.githubusercontent.com/Aguafrommars/TheIdServer/master/package-
 dependencies:
   - name: mysql
     repository: https://charts.bitnami.com/bitnami
-    version: 8.8.26
+    version: 9.14.1
     condition: mysql.enabled, global.mysql.enabled
     tags:
       - back-end
@@ -68,7 +68,7 @@ dependencies:
       - seq
   - name: redis
     repository: https://charts.bitnami.com/bitnami
-    version: 16.5.2
+    version: 18.2.0
     condition: redis.enabled, global.redis.enabled
     tags:
       - back-end
